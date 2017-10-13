@@ -314,7 +314,10 @@ This part generates plots for each figure panel and saves it in a pdf
 ##   2
 ```
 
-<img src="figure/figure1-Rmdunnamed-chunk-2-1.png" title="plot of chunk unnamed-chunk-2" alt="plot of chunk unnamed-chunk-2" style="display: block; margin: auto;" />
+```
+## png 
+##   2
+```
 ```
 
 The R session information (including the OS info, R version and all
@@ -361,14 +364,13 @@ sessionInfo()
 ## [13] stringr_1.2.0        munsell_0.4.3        memoise_1.1.0       
 ## [16] evaluate_0.10.1      labeling_0.3         Biobase_2.34.0      
 ## [19] IRanges_2.8.2        parallel_3.3.1       curl_2.8.1          
-## [22] AnnotationDbi_1.36.2 highr_0.6            Rcpp_0.12.13        
-## [25] xtable_1.8-2         scales_0.5.0         S4Vectors_0.12.2    
-## [28] annotate_1.52.1      bit_1.1-12           digest_0.6.12       
-## [31] stringi_1.1.5        grid_3.3.1           tools_3.3.1         
-## [34] bitops_1.0-6         magrittr_1.5         RCurl_1.95-4.8      
-## [37] lazyeval_0.2.0       tibble_1.3.4         RSQLite_2.0         
-## [40] pkgconfig_2.0.1      httr_1.3.1           R6_2.2.2            
-## [43] git2r_0.19.0
+## [22] AnnotationDbi_1.36.2 Rcpp_0.12.13         xtable_1.8-2        
+## [25] scales_0.5.0         S4Vectors_0.12.2     annotate_1.52.1     
+## [28] bit_1.1-12           digest_0.6.12        stringi_1.1.5       
+## [31] grid_3.3.1           tools_3.3.1          bitops_1.0-6        
+## [34] magrittr_1.5         RCurl_1.95-4.8       lazyeval_0.2.0      
+## [37] tibble_1.3.4         RSQLite_2.0          pkgconfig_2.0.1     
+## [40] httr_1.3.1           R6_2.2.2             git2r_0.19.0
 ```
 
 ```r
@@ -376,6 +378,6 @@ Sys.time()
 ```
 
 ```
-## [1] "2017-10-13 13:53:47 EDT"
+## [1] "2017-10-13 13:58:52 EDT"
 ```
 
