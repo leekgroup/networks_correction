@@ -1,0 +1,142 @@
+---
+title: "Precision and recall in glasso networks using canonical pathway databases with shared true edges"
+output:
+  html_document:
+    code_folding: hide
+---
+
+
+This script generates panels for supplementary figure 8 in the manuscript titled -- "Addressing confounding artifacts in reconstruction of gene co-expression networks".
+This will re-generate precision and recall plots in glasso lasso networks using canonical pathway databases with true connections present in at least two DB
+
+```{r}
+source("/home-3/pparsan1@jhu.edu/work2/princy/claire_network/Network-Inference/gtex_networks/src/config")
+library(igraph)
+
+## read list of true positive edges present at least in 2 pathway databases
+df <- read.delim("/home-3/pparsan1@jhu.edu/work2/princy/claire_network/Network-Inference/gtex_networks/publication_figures/supp_figs/edge_filter/edges_in_twopathways.txt", header = F)
+dim(df)
+tp.fn <- graph_from_data_frame(df, directed = FALSE)
+
+
+# PC corrected
+load("/home-3/pparsan1@jhu.edu/work2/princy/claire_network/Network-Inference/gtex_networks/data/gtex_half_pc_corrected.Rdata")
+###**** REMEMBER 1 is hard coded in the next line ****###
+pc.gene.symbols <- sapply(rowData(gtex.half.pc.corrected[[1]])$symbol, function(x) x[[1]][1])
+genes.network.withnames <- which(!is.na(pc.gene.symbols))
+pc.gene.symbols <- pc.gene.symbols[genes.network.withnames]
+
+plot_precision_recall <- function(tissuename, truep.falsen, genes.network.index, gene.symbols.innetwork ){
+  fn <- tissuename
+  # fn <- "Subcutaneous"
+
+  ## for each dataset
+  precision <- matrix(ncol = 5, nrow = 50)
+  recall <- matrix(ncol = 5, nrow = 50)
+
+  version.data <- c(pcglasso, half.pcglasso, quarter.pcglasso, ringlasso, rawglasso)
+  for(j in 1:length(version.data)){
+    # j = 3
+    ## load dataset
+    load(paste(version.data[j], fn, ".Rdata", sep = ""))
+    glasso.network <- lapply(glasso.network, f <- function(m) {
+        m[lower.tri(m)] <- t(m)[lower.tri(m)]
+        m
+    }
+    )
+    glasso.network <- lapply(glasso.network, function(x,y,z){
+      x <- x[z,z]
+      x[which(is.na(x))] <- 0
+      dimnames(x) <- list(y,y)
+      x
+      }, gene.symbols.innetwork, genes.network.index)
+
+    precision.recall <- sapply(glasso.network, function(x,y){
+      x <- graph_from_adjacency_matrix(x, mode = "undirected", diag = F, weighted = T)
+      tp <- ecount(graph.intersection(x,y))
+      fp <- ecount(graph.difference(x,y))
+      fn <- ecount(y) - tp
+      precision.infunc <- tp/(tp+fp)
+      recall.infunc <- tp/(tp+fn)
+      return(c(precision.infunc, recall.infunc))
+      }, truep.falsen)
+
+    precision[,j] <- precision.recall[1,]
+    recall[,j] <- precision.recall[2,]
+  }
+
+  colnames(precision) <- c("PC-corrected","half-PC corrected","quarter-PC corrected", "RIN corrected", "uncorrected")
+  rownames(precision) <- lambda
+  plot.precision <- melt(precision)
+
+  colnames(recall) <- c("PC-corrected","half-PC corrected","quarter-PC corrected", "RIN corrected", "uncorrected")
+  rownames(recall) <- lambda
+  plot.recall <- melt(recall)
+
+  plot.both <- cbind(plot.precision, plot.recall[,3])
+  colnames(plot.both) <- c("lambda", "type", "precision", "recall")
+  plot.both
+}
+
+
+#### Run function
+plot.thyroid <- plot_precision_recall("Thyroid", tp.fn, genes.network.withnames, pc.gene.symbols)
+
+plot.muscle <- plot_precision_recall("Muscle", tp.fn, genes.network.withnames, pc.gene.symbols)
+
+plot.lung <- plot_precision_recall("Lung", tp.fn, genes.network.withnames, pc.gene.symbols)
+
+plot.blood <- plot_precision_recall("Blood", tp.fn, genes.network.withnames, pc.gene.symbols)
+
+plot.sub <- plot_precision_recall("Subcutaneous", tp.fn, genes.network.withnames, pc.gene.symbols)
+
+save(plot.thyroid, plot.muscle, plot.lung, plot.blood, plot.sub, file = "edge_filtered-glasso.RData")
+```
+
+##### make plots 
+```{r}
+source("/home-3/pparsan1@jhu.edu/work2/princy/claire_network/Network-Inference/gtex_networks/src/config")
+library(cowplot)
+load("edge_filtered-glasso.RData")
+## Read files
+theme_set(theme_cowplot(font_size=12)) # reduce default font size
+
+plot.thyroid <- ggplot(plot.thyroid, aes(x = recall, y = precision, colour = type)) + geom_point(size = 0.3) + 
+#  theme(text = element_text(size=7))+
+  xlab("Recall") + ylab("Precision")+ggtitle("Thyroid")
+
+
+plot.muscle <- ggplot(plot.muscle, aes(x = recall, y = precision, colour = type)) + geom_point(size = 0.3) + 
+#  theme(text = element_text(size=7)) +
+  xlab("Recall") + ylab("Precision")+ggtitle("Muscle - Skeletal")
+
+plot.lung <- ggplot(plot.lung, aes(x = recall, y = precision, colour = type)) + geom_point(size = 0.3) + 
+  theme(legend.title=element_blank())+
+  xlab("Recall") + ylab("Precision")+ggtitle("Lung")
+
+plot.blood <- ggplot(plot.blood, aes(x = recall, y = precision, colour = type)) + geom_point(size = 0.3) + 
+#  theme(text = element_text(size=7))+
+  xlab("Recall") + ylab("Precision")+ggtitle("Whole Blood")
+
+plot.sub <- ggplot(plot.sub, aes(x = recall, y = precision, colour = type)) + geom_point(size = 0.3) + 
+#  theme(text = element_text(size=7))+
+  xlab("Recall") + ylab("Precision")+ggtitle("Adipose - Subcutaneous")
+
+
+legend <- get_legend(plot.lung +
+        theme(legend.key = element_rect(color = "black", linetype = "solid", size = 0.5),
+        legend.key.size = unit(0.3, "cm"), legend.key.height=unit(1.5,"line")) + 
+        guides(colour = guide_legend(override.aes = list(size= 1))))
+
+
+plot_grid(plot.sub + xlim(0,0.03) + ylim(0, 0.70) + theme(legend.position="none"),
+        plot.thyroid + xlim(0,0.03) + ylim(0, 0.70) +  theme(legend.position="none"),
+        plot.lung + xlim(0,0.03) + ylim(0, 0.70) + theme(legend.position="none"),
+        plot.muscle + xlim(0,0.03) + ylim(0, 0.70) + theme(legend.position="none"),
+        plot.blood + xlim(0,0.03) + ylim(0, 0.70) + theme(legend.position="none"),
+        legend,
+           labels = c("a", "b", "c", "d", "e"),
+           hjust = -1,
+           nrow = 3
+           )
+```

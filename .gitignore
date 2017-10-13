@@ -1,0 +1,8 @@
+data/
+data/old/
+networks/
+networks/old/
+src/old/
+src/log/
+src/shellscripts/slurm*
+publication_rmd/gene_gc_content/gencode.v25.pc_transcripts.fa
