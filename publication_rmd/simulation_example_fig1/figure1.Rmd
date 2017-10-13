@@ -250,9 +250,5 @@ fig1 <- plot_grid(panela + theme(legend.position="none"),
 legenda <- get_legend(panela + theme(legend.direction = "horizontal", legend.position = "top"))
 legendb <- get_legend(panelb + theme(legend.direction = "horizontal", legend.position = "top"))
 legend <- plot_grid(legenda, legendb, NULL, ncol = 3)
-fig1 <- plot_grid( legend, fig1, rel_heights = c(.1, 1), ncol = 1)
-
-pdf("merged.pdf", height = 6, width = 6)
-print(fig1)
-dev.off()
+plot_grid( legend, fig1, rel_heights = c(.1, 1), ncol = 1)
 ```
