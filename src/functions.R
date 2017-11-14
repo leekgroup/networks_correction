@@ -161,20 +161,23 @@ graph.lasso <- function(rse.object, rho.values, tolerance, max.iter){
 
 
 ## WGCNA networks at different cut height
-weighted.networks <- function(dat, cutheights, power, blocks = NULL, goodGenes = NULL, goodSamples = NULL, dendrograms = NULL){
+weighted.networks <- function(dat, cutheights, power, blocks = NULL, goodGenes = NULL, goodSamples = NULL, dendrograms = NULL, networkType = NULL){
 	source("config")
+	if(is.null(networkType)){
+		networkType <- "unsigned"
+	}
 	if(cutheights == 0.9){
 		w.networks <- blockwiseModules(dat, power = power,TOMType = TOMType, saveTOMs = TRUE,
-                                minModuleSize = minModuleSize,
+                                minModuleSize = minModuleSize, networkType = networkType,
                                 reassignThreshold = reassignThreshold, detectCutHeight = cutheights, mergeCutHeight = mergeCutHeight,
                                 numericLabels = numericLabels, pamRespectsDendro = pamRespectsDendro,verbose = verbose, maxBlockSize = maxBlockSize)
 	}else{
-		w.networks <- lapply(cutheights, function(x,y,a,b,c,d){
+		w.networks <- lapply(cutheights, function(x,y,a,b,c,d,e){
 					print(x)
-					recutBlockwiseTrees(y, blocks = a, TOMFiles = "blockwiseTOM-block.1.RData", minModuleSize = minModuleSize, goodGenes = b, goodSamples = c,
+					recutBlockwiseTrees(y, blocks = a, TOMFiles = "blockwiseTOM-block.1.RData", minModuleSize = minModuleSize, goodGenes = b, goodSamples = c, networkType = e,
                                 reassignThreshold = reassignThreshold, detectCutHeight = x, mergeCutHeight = mergeCutHeight, dendrograms = d,
                                 numericLabels = numericLabels, pamRespectsDendro = pamRespectsDendro,verbose = verbose)
-			}, dat, blocks, goodGenes, goodSamples, dendrograms)
+			}, dat, blocks, goodGenes, goodSamples, dendrograms, networkType)
 	}
 	w.networks
 }

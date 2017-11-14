@@ -3,7 +3,7 @@
 #SBATCH --time=12:0:0
 #SBATCH --mem=80G
 
-cd /home-3/pparsan1@jhu.edu/work2/princy/claire_network/Network-Inference/gtex_networks/src/
+cd /home-3/pparsan1@jhu.edu/work2/princy/networks_correction/src/
 mkdir log
 
 

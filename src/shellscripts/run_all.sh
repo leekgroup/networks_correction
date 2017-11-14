@@ -2,14 +2,14 @@
 #SBATCH --time=96:0:0
 #SBATCH --mem=70G
 
-cd /home-3/pparsan1@jhu.edu/work2/princy/claire_network/Network-Inference/gtex_networks/src/
+cd /home-3/pparsan1@jhu.edu/work2/princy/networks_correction/src/
 mkdir log
-mkdir /home-3/pparsan1@jhu.edu/work2/princy/claire_network/Network-Inference/gtex_networks/plots/
+mkdir /home-3/pparsan1@jhu.edu/work2/princy/networks_correction/plots/
 #sh get_true_positive.sh >log/tp.log
 Rscript dataDownload.R >log/download.log
 Rscript process_gtex.R >log/process.log
 
-cd /home-3/pparsan1@jhu.edu/work2/princy/claire_network/Network-Inference/gtex_networks/src/
+cd /home-3/pparsan1@jhu.edu/work2/princy/networks_correction/src/
 Rscript infer_networks_updated.R raw WGCNA >log/raw_wgcna.log 
 Rscript infer_networks_updated.R raw glasso Thyroid >log/raw_thyroid.log 
 Rscript infer_networks_updated.R raw glasso Subcutaneous >log/raw_sub.log 

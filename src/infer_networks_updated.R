@@ -1,5 +1,4 @@
 ## load configs and working directory
-setwd("/home-3/pparsan1@jhu.edu/work2/princy/claire_network/Network-Inference/gtex_networks/src")
 source("config")
 source("functions.R")
 
@@ -8,7 +7,7 @@ source("functions.R")
 inputargs <- commandArgs(TRUE)
 dat.type <- inputargs[1]
 net.type <- inputargs[2]
-save.prefix <- inputargs[4]
+networkType <- inputargs[4]
 if(dat.type == "raw"){
 	data.file <- raw.data
 	save.dir <- raw
@@ -92,8 +91,12 @@ if(net.type == "WGCNA"){
 	load(data.file)
 
 	## set savename
-	save.fn <- paste(save.dir,save.prefix, "_wgcna_networks.RData", sep = "")
-
+	if(is.na(networkType)){
+		save.fn <- paste(save.dir, "wgcna_networks.RData", sep = "")
+	}else{
+		save.fn <- paste(save.dir, networkType, "_wgcna_networks.RData", sep = "")
+	}
+	print(save.fn)
 	## run WGCNA
 	wgcna.networks <- lapply(dat.net, function(x){
 		x <- normalize(x)
@@ -105,8 +108,8 @@ if(net.type == "WGCNA"){
 	#	network.dat <- blockwiseModules(dat, power = power,TOMType = TOMType, minModuleSize = minModuleSize,
 	#		reassignThreshold = reassignThreshold, mergeCutHeight = mergeCutHeight, numericLabels = numericLabels, 
 	#		pamRespectsDendro = pamRespectsDendro,verbose = verbose, maxBlockSize = maxBlockSize)
-		network.dat.first <- weighted.networks(dat, cutheights[1], power = power)
-		network.dat <- weighted.networks(dat, cutheights[-1], power = power, blocks = network.dat.first$blocks, goodGenes = network.dat.first$goodGenes, goodSamples = network.dat.first$goodSamples, dendrograms = network.dat.first$dendrograms)
+		network.dat.first <- weighted.networks(dat, cutheights[1], power = power, networkType = networkType)
+		network.dat <- weighted.networks(dat, cutheights[-1], power = power, blocks = network.dat.first$blocks, goodGenes = network.dat.first$goodGenes, goodSamples = network.dat.first$goodSamples, dendrograms = network.dat.first$dendrograms, networkType = networkType)
 		network.dat <- c(list(network.dat.first), network.dat)
 		network.dat
 	})
