@@ -111,13 +111,17 @@ exoncorrect <- function(rse.object){
 
 
 ## select power for WGCNA
-pick.power = function(dat){
-  pickSoftThreshold.output = pickSoftThreshold(dat)
+pick.power = function(dat, nType = "unsigned"){
+  pickSoftThreshold.output = pickSoftThreshold(dat, networkType = nType)
   #R2 = pickSoftThreshold.output$fitIndices$SFT.R.sq
   #power.list <- pickSoftThreshold.output$fitIndices$Power
   #power = ifelse( max(R2) >= 0.9, power.list[which(R2 >=  0.9)[1]], power.list[which(R2 == max(R2))[1]])
 #  power = which(R2 == max(R2))
   power <- pickSoftThreshold.output$powerEstimate
+  if(is.na(power)){
+	print(paste("no power reached r-suared cut-off, now choosing max r-squared based power"))
+	power <- pickSoftThreshold.output$fitIndices$Power[which(pickSoftThreshold.output$fitIndices$SFT.R.sq == max(pickSoftThreshold.output$fitIndices$SFT.R.sq))]
+	}
   power
 }
 
@@ -161,10 +165,13 @@ graph.lasso <- function(rse.object, rho.values, tolerance, max.iter){
 
 
 ## WGCNA networks at different cut height
-weighted.networks <- function(dat, cutheights, power, blocks = NULL, goodGenes = NULL, goodSamples = NULL, dendrograms = NULL, networkType = NULL){
+weighted.networks <- function(dat, cutheights, power, blocks = NULL, goodGenes = NULL, goodSamples = NULL, dendrograms = NULL, networkType = "unsigned"){
 	source("config")
-	if(is.null(networkType)){
-		networkType <- "unsigned"
+#	if(is.null(networkType)){
+#		networkType <- "unsigned"
+#	}
+	if(networkType != "unsigned"){
+		TOMType <- networkType
 	}
 	if(cutheights == 0.9){
 		w.networks <- blockwiseModules(dat, power = power,TOMType = TOMType, saveTOMs = TRUE,

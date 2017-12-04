@@ -92,6 +92,7 @@ if(net.type == "WGCNA"){
 
 	## set savename
 	if(is.na(networkType)){
+		networkType <- "unsigned"
 		save.fn <- paste(save.dir, "wgcna_networks.RData", sep = "")
 	}else{
 		save.fn <- paste(save.dir, networkType, "_wgcna_networks.RData", sep = "")
@@ -102,7 +103,7 @@ if(net.type == "WGCNA"){
 		x <- normalize(x)
 		dat <- t(assay(x,1)) ## genes in columns for WGCNA
 		# determine power
-		power <- pick.power(dat)
+		power <- pick.power(dat, nType = networkType)
 		print(power)
 		## arguments for wgcna are defined in config file
 	#	network.dat <- blockwiseModules(dat, power = power,TOMType = TOMType, minModuleSize = minModuleSize,
