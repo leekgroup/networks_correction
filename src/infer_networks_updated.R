@@ -32,13 +32,22 @@ if(dat.type == "exon"){
 	dat.net <- gtex.rse.exon
 }
 
-if(dat.type == "expeff"){
-        data.file <- expeff.dat
-        save.dir <- expeff
+if(dat.type == "multi3"){
+        data.file <- multi3.dat
+        save.dir <- multi3
         ## load data
         load(data.file)
-        dat.net <- gtex.rse.expeff
+        dat.net <- gtex.rse.multi3
 }
+
+if(dat.type == "multi7"){
+        data.file <- multi7.dat
+        save.dir <- multi7
+        ## load data
+        load(data.file)
+        dat.net <- gtex.rse.multi7
+}
+
 if(dat.type == "gc"){
         data.file <- gc.dat
         save.dir <- gc
@@ -123,7 +132,7 @@ if(net.type == "glasso"){
 		## set savename
 		tiss.name <- inputargs[3]
 		save.dir <- paste(save.dir,"glasso/", sep = "")
-		save.fn <- paste(save.dir, save.prefix, "_", tiss.name, ".Rdata", sep = "")
+		save.fn <- paste(save.dir, tiss.name, ".Rdata", sep = "")
 		tiss.rse <- dat.net[[tiss.name]]
 		print(tiss.name)
 		}else{

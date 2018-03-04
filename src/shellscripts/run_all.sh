@@ -2,14 +2,20 @@
 #SBATCH --time=96:0:0
 #SBATCH --mem=70G
 
-cd /home-3/pparsan1@jhu.edu/work2/princy/networks_correction/src/
+source ~/.bash_profile
+source /work-zfs/abattle4/parsana/networks_correction/src/shellscripts/dirconfig
+cd $netcorrectsrc
+
 mkdir log
-mkdir /home-3/pparsan1@jhu.edu/work2/princy/networks_correction/plots/
+mkdir /work-zfs/abattle4/parsana/networks_correction/plots/
 #sh get_true_positive.sh >log/tp.log
 Rscript dataDownload.R >log/download.log
 Rscript process_gtex.R >log/process.log
+Rscript attach_gc_recount.R >log/attach_gc_recount.log
+Rscript covariate_correction.R >log/covariate_correction.log
 
-cd /home-3/pparsan1@jhu.edu/work2/princy/networks_correction/src/
+
+cd $netcorrectsrc
 Rscript infer_networks_updated.R raw WGCNA >log/raw_wgcna.log 
 Rscript infer_networks_updated.R raw glasso Thyroid >log/raw_thyroid.log 
 Rscript infer_networks_updated.R raw glasso Subcutaneous >log/raw_sub.log 
@@ -33,13 +39,22 @@ Rscript infer_networks_updated.R exon glasso Lung >log/exon_lung.log
 Rscript infer_networks_updated.R exon glasso Blood >log/exon_blood.log
 Rscript infer_networks_updated.R exon glasso Muscle >log/exon_muscle.log
 
-### expeff
-Rscript infer_networks_updated.R expeff WGCNA >log/expeff_wgcna.log
-Rscript infer_networks_updated.R expeff glasso Thyroid >log/expeff_thyroid.log
-Rscript infer_networks_updated.R expeff glasso Subcutaneous >log/expeff_sub.log
-Rscript infer_networks_updated.R expeff glasso Lung >log/expeff_lung.log
-Rscript infer_networks_updated.R expeff glasso Blood >log/expeff_blood.log
-Rscript infer_networks_updated.R expeff glasso Muscle >log/expeff_muscle.log
+### multiple 3 cov
+Rscript infer_networks_updated.R multi3 WGCNA >log/multi3_wgcna.log
+Rscript infer_networks_updated.R multi3 glasso Thyroid >log/multi3_thyroid.log
+Rscript infer_networks_updated.R multi3 glasso Subcutaneous >log/multi3_sub.log
+Rscript infer_networks_updated.R multi3 glasso Lung >log/multi3_lung.log
+Rscript infer_networks_updated.R multi3 glasso Blood >log/multi3_blood.log
+Rscript infer_networks_updated.R multi3 glasso Muscle >log/multi3_muscle.log
+
+### multiple 7 cov
+Rscript infer_networks_updated.R multi7 WGCNA >log/multi7_wgcna.log
+Rscript infer_networks_updated.R multi7 glasso Thyroid >log/multi7_thyroid.log
+Rscript infer_networks_updated.R multi7 glasso Subcutaneous >log/multi7_sub.log
+Rscript infer_networks_updated.R multi7 glasso Lung >log/multi7_lung.log
+Rscript infer_networks_updated.R multi7 glasso Blood >log/multi7_blood.log
+Rscript infer_networks_updated.R multi7 glasso Muscle >log/multi7_muscle.log
+
 
 ## gc_residuals
 Rscript infer_networks_updated.R gc WGCNA >log/gc_wgcna.log

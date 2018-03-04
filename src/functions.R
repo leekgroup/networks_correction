@@ -93,22 +93,12 @@ variable.selection.average <- function(rse.object, n, ...){
 
 ## RIN correction
 covcorrect <- function(rse.object,covname){
-	rin.vals <- colData(rse.object)[[covname]]
+	cov.vals <- colData(rse.object)[covname]
 	expr.dat <- t(SummarizedExperiment::assay(rse.object, 1))
-	rin.corrected <- lm(expr.dat~rin.vals)$residuals
+	cov.corrected <- lm(expr.dat~., data = cov.vals)$residuals
 	SummarizedExperiment::assay(rse.object, 1) <- t(rin.corrected)
 	rse.object
 	}
-
-## Exonic rate correction
-exoncorrect <- function(rse.object){
-        exrt.vals <- colData(rse.object)$smexncrt
-        expr.dat <- t(SummarizedExperiment::assay(rse.object, 1))
-        exrt.corrected <- lm(expr.dat~exrt.vals)$residuals
-        SummarizedExperiment::assay(rse.object, 1) <- t(exrt.corrected)
-        rse.object
-        }
-
 
 ## select power for WGCNA
 pick.power = function(dat, nType = "unsigned"){

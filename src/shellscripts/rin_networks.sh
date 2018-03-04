@@ -2,7 +2,9 @@
 #SBATCH --time=30:0:0
 #SBATCH --mem=80G
 
-cd /home-3/pparsan1@jhu.edu/work2/princy/networks_correction/src/
+source /work-zfs/abattle4/parsana/networks_correction/src/shellscripts/dirconfig
+cd $netcorrectsrc
+
 mkdir log
 
 

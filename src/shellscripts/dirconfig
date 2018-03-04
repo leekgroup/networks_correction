@@ -1,0 +1,2 @@
+netcorrecthome=$parsana/networks_correction
+netcorrectsrc=$netcorrecthome/src
