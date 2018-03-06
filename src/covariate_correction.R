@@ -1,5 +1,7 @@
 # libraries
 library(recount)
+source("functions.R")
+
 # Load GC attached data
 
 load("/work-zfs/abattle4/parsana/networks_correction/data/raw_subset_gc_attached.Rdata")

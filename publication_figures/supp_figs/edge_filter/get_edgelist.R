@@ -4,7 +4,7 @@ rm(list = ls())
 library(igraph)
 library(recount)
 ## read genesets of interest
-g.sets <- read.delim("/home-3/pparsan1@jhu.edu/work2/princy/claire_network/Network-Inference/gtex_networks/data/genesets/canonical_pathways_merged.txt", header = F, stringsAsFactors = F, row.names = 1)
+g.sets <- read.delim("/work-zfs/abattle4/parsana/networks_correction/data/genesets/canonical_pathways_merged.txt", header = F, stringsAsFactors = F, row.names = 1)
 g.sets$V2 <- NULL
 names.gsets <- rownames(g.sets)
 g.sets <- t(g.sets)
@@ -22,7 +22,7 @@ g.sets <- do.call(rbind, g.sets)
 g.sets <- unique(data.frame(g.sets))
 tp.fn <- graph.data.frame(g.sets, directed = FALSE)
 
-load("/home-3/pparsan1@jhu.edu/work2/princy/claire_network/Network-Inference/gtex_networks/data/gtex_half_pc_corrected.Rdata")
+load("/work-zfs/abattle4/parsana/networks_correction/data/gtex_half_pc_corrected.Rdata")
 		###**** REMEMBER 1 is hard coded in the next line ****###
 		pc.gene.symbols <- sapply(rowData(gtex.half.pc.corrected[[1]])$symbol, function(x) x[[1]][1])
 		genes.network.withnames <- which(!is.na(pc.gene.symbols))
@@ -38,7 +38,7 @@ load("/home-3/pparsan1@jhu.edu/work2/princy/claire_network/Network-Inference/gte
 rm(list=ls())
 library(recount)
 library(igraph)
-kegg <- read.delim("/home-3/pparsan1@jhu.edu/work2/princy/claire_network/Network-Inference/gtex_networks/data/genesets/kegg2016.txt",
+kegg <- read.delim("/work-zfs/abattle4/parsana/networks_correction/data/genesets/kegg2016.txt",
 	header = F, stringsAsFactors = F, row.names = 1)
 kegg$V2 <- NULL
 names.gsets <- rownames(kegg)
@@ -57,7 +57,7 @@ kegg <- do.call(rbind, kegg)
 kegg <- unique(data.frame(kegg))
 tp.fn <- graph.data.frame(kegg, directed = FALSE)
 
-load("/home-3/pparsan1@jhu.edu/work2/princy/claire_network/Network-Inference/gtex_networks/data/gtex_half_pc_corrected.Rdata")
+load("/work-zfs/abattle4/parsana/networks_correction/data/gtex_half_pc_corrected.Rdata")
 		###**** REMEMBER 1 is hard coded in the next line ****###
 		pc.gene.symbols <- sapply(rowData(gtex.half.pc.corrected[[1]])$symbol, function(x) x[[1]][1])
 		genes.network.withnames <- which(!is.na(pc.gene.symbols))
@@ -74,7 +74,7 @@ load("/home-3/pparsan1@jhu.edu/work2/princy/claire_network/Network-Inference/gte
 rm(list=ls())
 library(recount)
 library(igraph)
-biocarta <- read.delim("/home-3/pparsan1@jhu.edu/work2/princy/claire_network/Network-Inference/gtex_networks/data/genesets/biocarta2016.txt",
+biocarta <- read.delim("/work-zfs/abattle4/parsana/networks_correction/data/genesets/biocarta2016.txt",
 	header = F, stringsAsFactors = F, row.names = 1)
 biocarta$V2 <- NULL
 names.gsets <- rownames(biocarta)
@@ -93,7 +93,7 @@ biocarta <- do.call(rbind, biocarta)
 biocarta <- unique(data.frame(biocarta))
 tp.fn <- graph.data.frame(biocarta, directed = FALSE)
 
-load("/home-3/pparsan1@jhu.edu/work2/princy/claire_network/Network-Inference/gtex_networks/data/gtex_half_pc_corrected.Rdata")
+load("/work-zfs/abattle4/parsana/networks_correction/data/gtex_half_pc_corrected.Rdata")
 		###**** REMEMBER 1 is hard coded in the next line ****###
 		pc.gene.symbols <- sapply(rowData(gtex.half.pc.corrected[[1]])$symbol, function(x) x[[1]][1])
 		genes.network.withnames <- which(!is.na(pc.gene.symbols))
@@ -111,7 +111,7 @@ load("/home-3/pparsan1@jhu.edu/work2/princy/claire_network/Network-Inference/gte
 rm(list=ls())
 library(recount)
 library(igraph)
-pid <- read.delim("/home-3/pparsan1@jhu.edu/work2/princy/claire_network/Network-Inference/gtex_networks/data/genesets/pid2016.txt",
+pid <- read.delim("/work-zfs/abattle4/parsana/networks_correction/data/genesets/pid2016.txt",
 	header = F, stringsAsFactors = F, row.names = 1)
 pid$V2 <- NULL
 names.gsets <- rownames(pid)
@@ -130,7 +130,7 @@ pid <- do.call(rbind, pid)
 pid <- unique(data.frame(pid))
 tp.fn <- graph.data.frame(pid, directed = FALSE)
 
-load("/home-3/pparsan1@jhu.edu/work2/princy/claire_network/Network-Inference/gtex_networks/data/gtex_half_pc_corrected.Rdata")
+load("/work-zfs/abattle4/parsana/networks_correction/data/gtex_half_pc_corrected.Rdata")
 		###**** REMEMBER 1 is hard coded in the next line ****###
 		pc.gene.symbols <- sapply(rowData(gtex.half.pc.corrected[[1]])$symbol, function(x) x[[1]][1])
 		genes.network.withnames <- which(!is.na(pc.gene.symbols))
@@ -147,7 +147,7 @@ load("/home-3/pparsan1@jhu.edu/work2/princy/claire_network/Network-Inference/gte
 rm(list=ls())
 library(recount)
 library(igraph)
-reactome <- read.delim("/home-3/pparsan1@jhu.edu/work2/princy/claire_network/Network-Inference/gtex_networks/data/genesets/reactome2016.txt",
+reactome <- read.delim("/work-zfs/abattle4/parsana/networks_correction/data/genesets/reactome2016.txt",
 	header = F, stringsAsFactors = F, row.names = 1)
 reactome$V2 <- NULL
 names.gsets <- rownames(reactome)
@@ -167,7 +167,7 @@ reactome <- unique(data.frame(reactome))
 
 tp.fn <- graph.data.frame(reactome, directed = FALSE)
 
-load("/home-3/pparsan1@jhu.edu/work2/princy/claire_network/Network-Inference/gtex_networks/data/gtex_half_pc_corrected.Rdata")
+load("/work-zfs/abattle4/parsana/networks_correction/data/gtex_half_pc_corrected.Rdata")
 		###**** REMEMBER 1 is hard coded in the next line ****###
 		pc.gene.symbols <- sapply(rowData(gtex.half.pc.corrected[[1]])$symbol, function(x) x[[1]][1])
 		genes.network.withnames <- which(!is.na(pc.gene.symbols))

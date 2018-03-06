@@ -1,35 +1,35 @@
-source("/home-3/pparsan1@jhu.edu/work2/princy/claire_network/Network-Inference/gtex_networks/src/config")
+source("/work-zfs/abattle4/parsana/networks_correction/src/config")
 library(cowplot)
 
 ## Read files
 theme_set(theme_cowplot(font_size=12)) # reduce default font size
 
-plot.thyroid <- read.csv("/home-3/pparsan1@jhu.edu/work2/princy/claire_network/Network-Inference/gtex_networks/publication_figures/fig2/pr_table_thyroid.csv", row.names = 1, stringsAsFactors = F)
+plot.thyroid <- read.csv("/work-zfs/abattle4/parsana/networks_correction/publication_figures/fig2/pr_table_thyroid.csv", row.names = 1, stringsAsFactors = F)
 plot.thyroid <- plot.thyroid[-which(plot.thyroid$type %in% c("RIN","expeff", "exonic rate")),]
 plot.thyroid$type <- factor(plot.thyroid$type, levels = c("PC corrected","half-PC","quarter-PC", "gene GC%", "uncorrected"))
 plot.thyroid <- ggplot(plot.thyroid, aes(x = recall, y = precision, colour = type)) + geom_point(size = 0.3) + 
 	xlab("Recall") + ylab("Precision")+ggtitle("Thyroid")
 
 
-plot.muscle <- read.csv("/home-3/pparsan1@jhu.edu/work2/princy/claire_network/Network-Inference/gtex_networks/publication_figures/fig2/pr_table_muscle.csv", row.names = 1, stringsAsFactors = F)
+plot.muscle <- read.csv("/work-zfs/abattle4/parsana/networks_correction/publication_figures/fig2/pr_table_muscle.csv", row.names = 1, stringsAsFactors = F)
 plot.muscle <- plot.muscle[-which(plot.muscle$type %in% c("RIN","expeff", "exonic rate")),]
 plot.muscle$type <- factor(plot.muscle$type, levels = c("PC corrected","half-PC","quarter-PC", "gene GC%", "uncorrected"))
 plot.muscle <- ggplot(plot.muscle, aes(x = recall, y = precision, colour = type)) + geom_point(size = 0.3) + 
 	xlab("Recall") + ylab("Precision")+ggtitle("Muscle - Skeletal")
 
-plot.lung <- read.csv("/home-3/pparsan1@jhu.edu/work2/princy/claire_network/Network-Inference/gtex_networks/publication_figures/fig2/pr_table_lung.csv", , row.names = 1, stringsAsFactors = F)
+plot.lung <- read.csv("/work-zfs/abattle4/parsana/networks_correction/publication_figures/fig2/pr_table_lung.csv", , row.names = 1, stringsAsFactors = F)
 plot.lung <- plot.lung[-which(plot.lung$type %in% c("RIN","expeff", "exonic rate")),]
 plot.lung$type <- factor(plot.lung$type, levels = c("PC corrected","half-PC","quarter-PC", "gene GC%", "uncorrected"))
 plot.lung <- ggplot(plot.lung, aes(x = recall, y = precision, colour = type)) + geom_point(size = 0.3) + 
 	xlab("Recall") + ylab("Precision")+ggtitle("Lung")
 
-plot.blood <- read.csv("/home-3/pparsan1@jhu.edu/work2/princy/claire_network/Network-Inference/gtex_networks/publication_figures/fig2/pr_table_blood.csv", , row.names = 1, stringsAsFactors = F)
+plot.blood <- read.csv("/work-zfs/abattle4/parsana/networks_correction/publication_figures/fig2/pr_table_blood.csv", , row.names = 1, stringsAsFactors = F)
 plot.blood <- plot.blood[-which(plot.blood$type %in% c("RIN","expeff", "exonic rate")),]
 plot.blood$type <- factor(plot.blood$type, levels = c("PC corrected","half-PC","quarter-PC", "gene GC%", "uncorrected"))
 plot.blood <- ggplot(plot.blood, aes(x = recall, y = precision, colour = type)) + geom_point(size = 0.3) + 
 	xlab("Recall") + ylab("Precision")+ggtitle("Whole Blood")
 
-plot.sub <- read.csv("/home-3/pparsan1@jhu.edu/work2/princy/claire_network/Network-Inference/gtex_networks/publication_figures/fig2/pr_table_sub.csv", row.names = 1, stringsAsFactors = F)
+plot.sub <- read.csv("/work-zfs/abattle4/parsana/networks_correction/publication_figures/fig2/pr_table_sub.csv", row.names = 1, stringsAsFactors = F)
 plot.sub <- plot.sub[-which(plot.sub$type %in% c("RIN","expeff", "exonic rate")),]
 plot.sub$type <- factor(plot.sub$type, levels = c("PC corrected","half-PC","quarter-PC", "gene GC%", "uncorrected"))
 plot.sub <- ggplot(plot.sub, aes(x = recall, y = precision, colour = type)) + geom_point(size = 0.3) + 

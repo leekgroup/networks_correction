@@ -11,28 +11,28 @@ library("parallel")
 library("ggplot2")
 
 ## data directory
-datDir <- "/work-zfs/abattle4/parsana/networks_correction/src/data/"
-netMain <- "/work-zfs/abattle4/parsana/networks_correction/src/networks/"
-pc <- "/work-zfs/abattle4/parsana/networks_correction/src/networks/pc_corrected/"
-rin <- "/work-zfs/abattle4/parsana/networks_correction/src/networks/rin/"
-expeff <- "/work-zfs/abattle4/parsana/networks_correction/src/networks/expeff/"
-exonic <- "/work-zfs/abattle4/parsana/networks_correction/src/networks/exonic/"
+datDir <- "/work-zfs/abattle4/parsana/networks_correction/data/"
+netMain <- "/work-zfs/abattle4/parsana/networks_correction/networks/"
+pc <- "/work-zfs/abattle4/parsana/networks_correction/networks/pc_corrected/"
+rin <- "/work-zfs/abattle4/parsana/networks_correction/networks/rin/"
+expeff <- "/work-zfs/abattle4/parsana/networks_correction/networks/expeff/"
+exonic <- "/work-zfs/abattle4/parsana/networks_correction/networks/exonic/"
 gc <- "/work-zfs/abattle4/parsana/networks_correction/networks/gc/"
 multi3 <- "/work-zfs/abattle4/parsana/networks_correction/networks/multi3/"
 multi7 <- "/work-zfs/abattle4/parsana/networks_correction/networks/multi7/"
-ringlasso <-"/work-zfs/abattle4/parsana/networks_correction/src/networks/rin/glasso/"
-expeff.glasso <- "/work-zfs/abattle4/parsana/networks_correction/src/networks/expeff/glasso/"
-exonic.glasso <- "/work-zfs/abattle4/parsana/networks_correction/src/networks/exonic/glasso/"
+ringlasso <-"/work-zfs/abattle4/parsana/networks_correction/networks/rin/glasso/"
+expeff.glasso <- "/work-zfs/abattle4/parsana/networks_correction/networks/expeff/glasso/"
+exonic.glasso <- "/work-zfs/abattle4/parsana/networks_correction/networks/exonic/glasso/"
 gcglasso <- "/work-zfs/abattle4/parsana/networks_correction/networks/gc/glasso/"
-pcglasso <- "/work-zfs/abattle4/parsana/networks_correction/src/networks/pc_corrected/glasso/"
-multi3glasso <- "/work-zfs/abattle4/parsana/networks_correction/networks/multi3/glasso"
-multi7glasso <- "/work-zfs/abattle4/parsana/networks_correction/networks/multi7/glasso"
-raw <- "/work-zfs/abattle4/parsana/networks_correction/src/networks/raw/"
-rawglasso <- "/work-zfs/abattle4/parsana/networks_correction/src/networks/raw/glasso/"
-half.pc <-"/work-zfs/abattle4/parsana/networks_correction/src/networks/half_pc_corrected/" 
-half.pcglasso <- "/work-zfs/abattle4/parsana/networks_correction/src/networks/half_pc_corrected/glasso/"
-quarter.pc <- "/work-zfs/abattle4/parsana/networks_correction/src/networks/quarter_pc_corrected/"
-quarter.pcglasso <- "/work-zfs/abattle4/parsana/networks_correction/src/networks/quarter_pc_corrected/glasso/"
+pcglasso <- "/work-zfs/abattle4/parsana/networks_correction/networks/pc_corrected/glasso/"
+multi3glasso <- "/work-zfs/abattle4/parsana/networks_correction/networks/multi3/glasso/"
+multi7glasso <- "/work-zfs/abattle4/parsana/networks_correction/networks/multi7/glasso/"
+raw <- "/work-zfs/abattle4/parsana/networks_correction/networks/raw/"
+rawglasso <- "/work-zfs/abattle4/parsana/networks_correction/networks/raw/glasso/"
+half.pc <-"/work-zfs/abattle4/parsana/networks_correction/networks/half_pc_corrected/" 
+half.pcglasso <- "/work-zfs/abattle4/parsana/networks_correction/networks/half_pc_corrected/glasso/"
+quarter.pc <- "/work-zfs/abattle4/parsana/networks_correction/networks/quarter_pc_corrected/"
+quarter.pcglasso <- "/work-zfs/abattle4/parsana/networks_correction/networks/quarter_pc_corrected/glasso/"
 dir.create(netMain)
 dir.create(pc)
 dir.create(pcglasso)
@@ -55,23 +55,23 @@ dir.create(multi3glasso)
 dir.create(multi7)
 dir.create(multi7glasso)
 ## PC corrected data
-pc.corrected <- "/work-zfs/abattle4/parsana/networks_correction/src/data/gtex_pc_corrected.Rdata"
+pc.corrected <- "/work-zfs/abattle4/parsana/networks_correction/data/gtex_pc_corrected.Rdata"
 
 
 ## half PC corrected data
-half.pc.corrected <- "/work-zfs/abattle4/parsana/networks_correction/src/data/gtex_half_pc_corrected.Rdata"
+half.pc.corrected <- "/work-zfs/abattle4/parsana/networks_correction/data/gtex_half_pc_corrected.Rdata"
 
 ## quarter PC
-quarter.pc.corrected <- "/work-zfs/abattle4/parsana/networks_correction/src/data/gtex_quarter_pc_corrected.Rdata"
+quarter.pc.corrected <- "/work-zfs/abattle4/parsana/networks_correction/data/gtex_quarter_pc_corrected.Rdata"
 
 ## RIN corrected data
-rin.corrected <- "/work-zfs/abattle4/parsana/networks_correction/src/data/gtex_rin_corrected.Rdata"
+rin.corrected <- "/work-zfs/abattle4/parsana/networks_correction/data/gtex_rin_corrected.Rdata"
 
 ## exonic rate
-exonic.dat <- "/work-zfs/abattle4/parsana/networks_correction/src/data/gtex_exon.Rdata"
+exonic.dat <- "/work-zfs/abattle4/parsana/networks_correction/data/gtex_exon.Rdata"
 
 ## expression profiling
-expeff.dat <- "/work-zfs/abattle4/parsana/networks_correction/src/data/gtex_expeff.Rdata"
+expeff.dat <- "/work-zfs/abattle4/parsana/networks_correction/data/gtex_expeff.Rdata"
 
 ## gc corrected
 gc.dat <- "/work-zfs/abattle4/parsana/networks_correction/data/gtex_gc.RData"
@@ -83,7 +83,7 @@ multi3.dat <- "/work-zfs/abattle4/parsana/networks_correction/data/gtex_multi3.R
 multi7.dat <- "/work-zfs/abattle4/parsana/networks_correction/data/gtex_multi7.Rdata"
 
 ## uncorrected data
-raw.data <- "/work-zfs/abattle4/parsana/networks_correction/src/data/raw_subset.Rdata"
+raw.data <- "/work-zfs/abattle4/parsana/networks_correction/data/raw_subset.Rdata"
 
 
 ## WGCNA

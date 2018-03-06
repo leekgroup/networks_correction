@@ -4,7 +4,7 @@ library(igraph)
 
 ## process the total list of true positives and false negatives --> total gene-gene pairs from the genesets
 ## read genesets of interest
-g.sets <- read.delim("/home-3/pparsan1@jhu.edu/work2/princy/claire_network/Network-Inference/gtex_networks/data/genesets/canonical_pathways_merged.txt", header = F, stringsAsFactors = F, row.names = 1)
+g.sets <- read.delim("/work-zfs/abattle4/parsana/networks_correction/data/genesets/canonical_pathways_merged.txt", header = F, stringsAsFactors = F, row.names = 1)
 g.sets$V2 <- NULL
 names.gsets <- rownames(g.sets)
 g.sets <- t(g.sets)
@@ -24,7 +24,7 @@ tp.fn <- graph.data.frame(g.sets, directed = FALSE)
 
 ## get gene names
 		# PC corrected
-		load("/home-3/pparsan1@jhu.edu/work2/princy/claire_network/Network-Inference/gtex_networks/data/gtex_half_pc_corrected.Rdata")
+		load("/work-zfs/abattle4/parsana/networks_correction/data/gtex_half_pc_corrected.Rdata")
 		###**** REMEMBER 1 is hard coded in the next line ****###
 		pc.gene.symbols <- sapply(rowData(gtex.half.pc.corrected[[1]])$symbol, function(x) x[[1]][1])
 		genes.network.withnames <- which(!is.na(pc.gene.symbols))
@@ -38,7 +38,7 @@ tp.fn <- graph.data.frame(g.sets, directed = FALSE)
 plot_precision_recall <- function(tissuename, truep.falsen, genes.network.index, gene.symbols.innetwork ){
 	fn <- tissuename
 	# fn <- "Subcutaneous"
-	version.data <- c(pc, half.pc, quarter.pc, exonic, expeff, rin, gc, raw)
+	version.data <- c(pc, half.pc, quarter.pc, exonic, expeff, rin, gc, multi3, multi7, raw)
 	## for each dataset
         precision <- matrix(ncol = length(version.data), nrow = 50)
         recall <- matrix(ncol = length(version.data), nrow = 50)
@@ -79,11 +79,11 @@ plot_precision_recall <- function(tissuename, truep.falsen, genes.network.index,
 		precision[,j] <- precision.recall[1,]
 		recall[,j] <- precision.recall[2,]
 	}
-	colnames(precision) <- c("PC corrected","half-PC","quarter-PC", "exonic rate", "expeff", "RIN", "gene GC%", "uncorrected")
+	colnames(precision) <- c("PC corrected","half-PC","quarter-PC", "exonic rate", "expeff", "RIN", "gene GC%", "multi3", "multi7", "uncorrected")
 	rownames(precision) <- cutheights
 	plot.precision <- melt(precision)
 
-	colnames(recall) <- c("PC corrected","half-PC","quarter-PC", "exonic rate", "expeff", "RIN", "gene GC%", "uncorrected")
+	colnames(recall) <- c("PC corrected","half-PC","quarter-PC", "exonic rate", "expeff", "RIN", "gene GC%", "multi3", "multi7", "uncorrected")
 	rownames(recall) <- cutheights
 	plot.recall <- melt(recall)
 

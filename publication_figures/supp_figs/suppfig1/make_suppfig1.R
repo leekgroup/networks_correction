@@ -1,31 +1,31 @@
-source("/home-3/pparsan1@jhu.edu/work2/princy/claire_network/Network-Inference/gtex_networks/src/config")
+source("/work-zfs/abattle4/parsana/networks_correction/src/config")
 library(cowplot)
 
 ## Read files
 theme_set(theme_cowplot(font_size=12)) # reduce default font size
 
-wgcna.plot.muscle <- read.csv("/home-3/pparsan1@jhu.edu/work2/princy/claire_network/Network-Inference/gtex_networks/publication_figures/fig2/pr_table_muscle.csv", 
+wgcna.plot.muscle <- read.csv("/work-zfs/abattle4/parsana/networks_correction/publication_figures/fig2/pr_table_muscle.csv", 
 	row.names = 1, stringsAsFactors = F)
 wgcna.plot.muscle <- wgcna.plot.muscle[-which(wgcna.plot.muscle$type %in% c("exonic rate","expeff", "gene GC%")),]
 wgcna.plot.muscle$type <- factor(wgcna.plot.muscle$type, levels = c("PC corrected","half-PC","quarter-PC", "RIN", "uncorrected"))
 wgcna.plot.muscle <- ggplot(wgcna.plot.muscle, aes(x = recall, y = precision, colour = type)) + geom_point(size = 0.3) + 
 	xlab("Recall") + ylab("Precision")+ggtitle("Muscle - Skeletal")
 
-wgcna.plot.blood <- read.csv("/home-3/pparsan1@jhu.edu/work2/princy/claire_network/Network-Inference/gtex_networks/publication_figures/fig2/pr_table_blood.csv", 
+wgcna.plot.blood <- read.csv("/work-zfs/abattle4/parsana/networks_correction/publication_figures/fig2/pr_table_blood.csv", 
 	row.names = 1, stringsAsFactors = F)
 wgcna.plot.blood <- wgcna.plot.blood[-which(wgcna.plot.blood$type %in% c("exonic rate", "expeff", "gene GC%")),]
 wgcna.plot.blood$type <- factor(wgcna.plot.blood$type, levels = c("PC corrected","half-PC","quarter-PC", "RIN", "uncorrected"))
 wgcna.plot.blood <- ggplot(wgcna.plot.blood, aes(x = recall, y = precision, colour = type)) + geom_point(size = 0.3) + 
 	xlab("Recall") + ylab("Precision")+ggtitle("Whole Blood")
 
-glasso.plot.muscle <- read.csv("/home-3/pparsan1@jhu.edu/work2/princy/claire_network/Network-Inference/gtex_networks/publication_figures/fig3/pr_table_muscle.csv", 
+glasso.plot.muscle <- read.csv("/work-zfs/abattle4/parsana/networks_correction/publication_figures/fig3/pr_table_muscle.csv", 
 	row.names = 1, stringsAsFactors = F)
 glasso.plot.muscle <- glasso.plot.muscle[-which(glasso.plot.muscle$type %in% c("exonic rate","expeff", "gene GC%")),]
 glasso.plot.muscle$type <- factor(glasso.plot.muscle$type, levels = c("PC corrected","half-PC","quarter-PC", "RIN", "uncorrected"))
 glasso.plot.muscle <- ggplot(glasso.plot.muscle, aes(x = recall, y = precision, colour = type)) + geom_point(size = 0.3) + 
 	xlab("Recall") + ylab("Precision")+ggtitle("Muscle-Skeletal")
 
-glasso.plot.blood <- read.csv("/home-3/pparsan1@jhu.edu/work2/princy/claire_network/Network-Inference/gtex_networks/publication_figures/fig3/pr_table_blood.csv", 
+glasso.plot.blood <- read.csv("/work-zfs/abattle4/parsana/networks_correction/publication_figures/fig3/pr_table_blood.csv", 
 	row.names = 1, stringsAsFactors = F)
 glasso.plot.blood <- glasso.plot.blood[-which(glasso.plot.blood$type %in% c("exonic rate", "expeff", "gene GC%")),]
 glasso.plot.blood$type <- factor(glasso.plot.blood$type, levels = c("PC corrected","half-PC","quarter-PC", "RIN", "uncorrected"))

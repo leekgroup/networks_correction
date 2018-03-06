@@ -1,4 +1,4 @@
-source("/home-3/pparsan1@jhu.edu/work2/princy/claire_network/Network-Inference/gtex_networks/src/config")
+source("/work-zfs/abattle4/parsana/networks_correction/src/config")
 library(cowplot)
 load("edge_filtered-wgcna.RData")
 ## Read files

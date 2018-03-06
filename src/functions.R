@@ -96,7 +96,7 @@ covcorrect <- function(rse.object,covname){
 	cov.vals <- colData(rse.object)[covname]
 	expr.dat <- t(SummarizedExperiment::assay(rse.object, 1))
 	cov.corrected <- lm(expr.dat~., data = cov.vals)$residuals
-	SummarizedExperiment::assay(rse.object, 1) <- t(rin.corrected)
+	SummarizedExperiment::assay(rse.object, 1) <- t(cov.corrected)
 	rse.object
 	}
 

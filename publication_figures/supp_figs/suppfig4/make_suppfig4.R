@@ -6,8 +6,8 @@ library(reshape2)
 library(cowplot)
 #### test association of expression PCs with gc coefficients
 
-load("/home-3/pparsan1@jhu.edu/work2/princy/claire_network/Network-Inference/gtex_networks/publication_rmd/gene_gc_content/analysis/gc_estimate_sample.RData")
-load("/home-3/pparsan1@jhu.edu/work2/princy/claire_network/Network-Inference/gtex_networks/publication_rmd/gene_gc_content/analysis/pcs_removed.RData")
+load("/work-zfs/abattle4/parsana/networks_correction/publication_rmd/gene_gc_content/analysis/gc_estimate_sample.RData")
+load("/work-zfs/abattle4/parsana/networks_correction/publication_rmd/gene_gc_content/analysis/pcs_removed.RData")
 
 	# fit linear model
 	gc.pc <- mapply(function(p,q){

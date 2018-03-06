@@ -1,4 +1,4 @@
-source("/home-3/pparsan1@jhu.edu/work2/princy/claire_network/Network-Inference/gtex_networks/src/config")
+source("/work-zfs/abattle4/parsana/networks_correction/src/config")
 library(igraph)
 
 ## read list of true positive edges present at least in 2 pathway databases
@@ -8,7 +8,7 @@ tp.fn <- graph_from_data_frame(df, directed = FALSE)
 
 
 # PC corrected
-load("/home-3/pparsan1@jhu.edu/work2/princy/claire_network/Network-Inference/gtex_networks/data/gtex_half_pc_corrected.Rdata")
+load("/work-zfs/abattle4/parsana/networks_correction/data/gtex_half_pc_corrected.Rdata")
 ###**** REMEMBER 1 is hard coded in the next line ****###
 pc.gene.symbols <- sapply(rowData(gtex.half.pc.corrected[[1]])$symbol, function(x) x[[1]][1])
 genes.network.withnames <- which(!is.na(pc.gene.symbols))

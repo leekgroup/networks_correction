@@ -10,7 +10,7 @@ library(knitr)
 library(kableExtra)
 
 ## load data
-load("/home-3/pparsan1@jhu.edu/work2/princy/networks_correction/publication_figures/fig3/fig3.RData")
+load("/work-zfs/abattle4/parsana/networks_correction/publication_figures/fig3/fig3.RData")
 	fig3 <- list(blood = plot.blood, lung = plot.lung, muscle = plot.muscle, sub = plot.sub, thyroid = plot.thyroid)
 
 ## Precision and Recall ( Uncorrected vs PC corrected)

@@ -6,7 +6,7 @@ library(RColorBrewer)
 library(reshape2)
 library(cowplot)
 # Load/Read data
-raw.data <- "/home-3/pparsan1@jhu.edu/work2/princy/claire_network/Network-Inference/gtex_networks/data/gtex_rse.Rdata"
+raw.data <- "/work-zfs/abattle4/parsana/networks_correction/data/gtex_rse.Rdata"
 load(raw.data)
 gene_gc <- read.delim("gene_full_gc_content.txt", header = F, stringsAsFactors = F)
 
