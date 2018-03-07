@@ -16,12 +16,13 @@ pc.gene.symbols <- pc.gene.symbols[genes.network.withnames]
 
 plot_precision_recall <- function(tissuename, truep.falsen, genes.network.index, gene.symbols.innetwork ){
   fn <- tissuename
-  # fn <- "Subcutaneous"
-  ## for each dataset
-  precision <- matrix(ncol = 5, nrow = 50)
-  recall <- matrix(ncol = 5, nrow = 50)
 
-  version.data <- c(pc, half.pc, quarter.pc, rin, raw)
+  version.data <- c(pc, half.pc, quarter.pc, rin, multi3, multi7, raw)
+  versions <- c("PC-corrected","half-PC corrected","quarter-PC corrected", "RIN corrected", "multi3", "multi7", "uncorrected")
+  ## for each dataset
+  precision <- matrix(ncol = length(versions), nrow = 50)
+  recall <- matrix(ncol = length(versions), nrow = 50)
+
   for(j in 1:length(version.data)){
     load(paste(version.data[j],"wgcna_networks.RData", sep = ""))
     wgcna.networks <- wgcna.networks[[fn]]
@@ -59,11 +60,11 @@ plot_precision_recall <- function(tissuename, truep.falsen, genes.network.index,
     precision[,j] <- precision.recall[1,]
     recall[,j] <- precision.recall[2,]
   }
-  colnames(precision) <- c("PC corrected","half-PC","quarter-PC", "RIN", "uncorrected")
+  colnames(precision) <- versions
   rownames(precision) <- cutheights
   plot.precision <- melt(precision)
 
-  colnames(recall) <- c("PC corrected","half-PC","quarter-PC", "RIN", "uncorrected")
+  colnames(recall) <- versions
   rownames(recall) <- cutheights
   plot.recall <- melt(recall)
 

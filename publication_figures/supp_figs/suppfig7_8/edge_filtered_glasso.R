@@ -18,12 +18,12 @@ plot_precision_recall <- function(tissuename, truep.falsen, genes.network.index,
   fn <- tissuename
   # fn <- "Subcutaneous"
 
+  version.data <- c(pcglasso, half.pcglasso, quarter.pcglasso, ringlasso, multi3glasso, multi7glasso, rawglasso)
+  versions <- c("PC-corrected","half-PC corrected","quarter-PC corrected", "RIN corrected", "multi3", "multi7", "uncorrected")
   ## for each dataset
-  precision <- matrix(ncol = 5, nrow = 50)
-  recall <- matrix(ncol = 5, nrow = 50)
-
-  version.data <- c(pcglasso, half.pcglasso, quarter.pcglasso, ringlasso, rawglasso)
-  for(j in 1:length(version.data)){
+  precision <- matrix(ncol = length(versions), nrow = 50)
+  recall <- matrix(ncol = length(versions), nrow = 50)
+    for(j in 1:length(version.data)){
     # j = 3
     ## load dataset
     load(paste(version.data[j], fn, ".Rdata", sep = ""))
@@ -53,11 +53,11 @@ plot_precision_recall <- function(tissuename, truep.falsen, genes.network.index,
     recall[,j] <- precision.recall[2,]
   }
 
-  colnames(precision) <- c("PC-corrected","half-PC corrected","quarter-PC corrected", "RIN corrected", "uncorrected")
+  colnames(precision) <- versions
   rownames(precision) <- lambda
   plot.precision <- melt(precision)
 
-  colnames(recall) <- c("PC-corrected","half-PC corrected","quarter-PC corrected", "RIN corrected", "uncorrected")
+  colnames(recall) <- versions
   rownames(recall) <- lambda
   plot.recall <- melt(recall)
 
