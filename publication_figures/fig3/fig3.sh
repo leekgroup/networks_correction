@@ -1,5 +1,5 @@
 #!/bin/sh
-#SBATCH --time=3:40:0
+#SBATCH --time=10:40:0
 #SBATCH --mem=50G
 
 source ~/.bash_profile
