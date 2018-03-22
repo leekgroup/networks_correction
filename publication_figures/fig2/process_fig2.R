@@ -38,7 +38,7 @@ tp.fn <- graph.data.frame(g.sets, directed = FALSE)
 plot_precision_recall <- function(tissuename, truep.falsen, genes.network.index, gene.symbols.innetwork ){
 	fn <- tissuename
 	# fn <- "Subcutaneous"
-	version.data <- c(pc, half.pc, quarter.pc, exonic, expeff, rin, gc, multi3, multi7, raw)
+	version.data <- c(pc, half.pc, quarter.pc, exonic, expeff, rin, gc, multi3, multicorr, raw)
 	## for each dataset
         precision <- matrix(ncol = length(version.data), nrow = 50)
         recall <- matrix(ncol = length(version.data), nrow = 50)
@@ -79,11 +79,11 @@ plot_precision_recall <- function(tissuename, truep.falsen, genes.network.index,
 		precision[,j] <- precision.recall[1,]
 		recall[,j] <- precision.recall[2,]
 	}
-	colnames(precision) <- c("PC corrected","half-PC","quarter-PC", "exonic rate", "expeff", "RIN", "gene GC%", "multi3", "multi7", "uncorrected")
+	colnames(precision) <- c("PC corrected","half-PC","quarter-PC", "exonic rate", "expeff", "RIN", "gene GC%", "multi3", "multicorr", "uncorrected")
 	rownames(precision) <- cutheights
 	plot.precision <- melt(precision)
 
-	colnames(recall) <- c("PC corrected","half-PC","quarter-PC", "exonic rate", "expeff", "RIN", "gene GC%", "multi3", "multi7", "uncorrected")
+	colnames(recall) <- c("PC corrected","half-PC","quarter-PC", "exonic rate", "expeff", "RIN", "gene GC%", "multi3", "multicorr", "uncorrected")
 	rownames(recall) <- cutheights
 	plot.recall <- melt(recall)
 
