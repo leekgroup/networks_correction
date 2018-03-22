@@ -40,12 +40,12 @@ if(dat.type == "multi3"){
         dat.net <- gtex.rse.multi3
 }
 
-if(dat.type == "multi7"){
-        data.file <- multi7.dat
-        save.dir <- multi7
+if(dat.type == "multicorr"){
+        data.file <- multicorr.dat
+        save.dir <- multicorr
         ## load data
         load(data.file)
-        dat.net <- gtex.rse.multi7
+        dat.net <- gtex.rse.multicorr
 }
 
 if(dat.type == "gc"){

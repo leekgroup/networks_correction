@@ -13,7 +13,7 @@ Rscript dataDownload.R >log/download.log
 Rscript process_gtex.R >log/process.log
 Rscript attach_gc_recount.R >log/attach_gc_recount.log
 Rscript covariate_correction.R >log/covariate_correction.log
-
+Rscript multiple_covariate_correction.R >log/multiple_covariate_correction.log
 
 cd $netcorrectsrc
 Rscript infer_networks_updated.R raw WGCNA >log/raw_wgcna.log 
@@ -48,12 +48,12 @@ Rscript infer_networks_updated.R multi3 glasso Blood >log/multi3_blood.log
 Rscript infer_networks_updated.R multi3 glasso Muscle >log/multi3_muscle.log
 
 ### multiple 7 cov
-Rscript infer_networks_updated.R multi7 WGCNA >log/multi7_wgcna.log
-Rscript infer_networks_updated.R multi7 glasso Thyroid >log/multi7_thyroid.log
-Rscript infer_networks_updated.R multi7 glasso Subcutaneous >log/multi7_sub.log
-Rscript infer_networks_updated.R multi7 glasso Lung >log/multi7_lung.log
-Rscript infer_networks_updated.R multi7 glasso Blood >log/multi7_blood.log
-Rscript infer_networks_updated.R multi7 glasso Muscle >log/multi7_muscle.log
+Rscript infer_networks_updated.R multicorr WGCNA >log/multicorr_wgcna.log
+Rscript infer_networks_updated.R multicorr glasso Thyroid >log/multicorr_thyroid.log
+Rscript infer_networks_updated.R multicorr glasso Subcutaneous >log/multicorr_sub.log
+Rscript infer_networks_updated.R multicorr glasso Lung >log/multicorr_lung.log
+Rscript infer_networks_updated.R multicorr glasso Blood >log/multicorr_blood.log
+Rscript infer_networks_updated.R multicorr glasso Muscle >log/multicorr_muscle.log
 
 
 ## gc_residuals

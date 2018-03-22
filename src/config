@@ -19,14 +19,14 @@ expeff <- "/work-zfs/abattle4/parsana/networks_correction/networks/expeff/"
 exonic <- "/work-zfs/abattle4/parsana/networks_correction/networks/exonic/"
 gc <- "/work-zfs/abattle4/parsana/networks_correction/networks/gc/"
 multi3 <- "/work-zfs/abattle4/parsana/networks_correction/networks/multi3/"
-multi7 <- "/work-zfs/abattle4/parsana/networks_correction/networks/multi7/"
+multicorr <- "/work-zfs/abattle4/parsana/networks_correction/networks/multicorr/"
 ringlasso <-"/work-zfs/abattle4/parsana/networks_correction/networks/rin/glasso/"
 expeff.glasso <- "/work-zfs/abattle4/parsana/networks_correction/networks/expeff/glasso/"
 exonic.glasso <- "/work-zfs/abattle4/parsana/networks_correction/networks/exonic/glasso/"
 gcglasso <- "/work-zfs/abattle4/parsana/networks_correction/networks/gc/glasso/"
 pcglasso <- "/work-zfs/abattle4/parsana/networks_correction/networks/pc_corrected/glasso/"
 multi3glasso <- "/work-zfs/abattle4/parsana/networks_correction/networks/multi3/glasso/"
-multi7glasso <- "/work-zfs/abattle4/parsana/networks_correction/networks/multi7/glasso/"
+multicorrglasso <- "/work-zfs/abattle4/parsana/networks_correction/networks/multicorr/glasso/"
 raw <- "/work-zfs/abattle4/parsana/networks_correction/networks/raw/"
 rawglasso <- "/work-zfs/abattle4/parsana/networks_correction/networks/raw/glasso/"
 half.pc <-"/work-zfs/abattle4/parsana/networks_correction/networks/half_pc_corrected/" 
@@ -52,8 +52,8 @@ dir.create(gc)
 dir.create(gcglasso)
 dir.create(multi3)
 dir.create(multi3glasso)
-dir.create(multi7)
-dir.create(multi7glasso)
+dir.create(multicorr)
+dir.create(multicorrglasso)
 ## PC corrected data
 pc.corrected <- "/work-zfs/abattle4/parsana/networks_correction/data/gtex_pc_corrected.Rdata"
 
@@ -79,8 +79,8 @@ gc.dat <- "/work-zfs/abattle4/parsana/networks_correction/data/gtex_gc.RData"
 ## multi3
 multi3.dat <- "/work-zfs/abattle4/parsana/networks_correction/data/gtex_multi3.Rdata"
 
-## multi7
-multi7.dat <- "/work-zfs/abattle4/parsana/networks_correction/data/gtex_multi7.Rdata"
+## multicorr
+multicorr.dat <- "/work-zfs/abattle4/parsana/networks_correction/data/gtex_multicorr.Rdata"
 
 ## uncorrected data
 raw.data <- "/work-zfs/abattle4/parsana/networks_correction/data/raw_subset.Rdata"
