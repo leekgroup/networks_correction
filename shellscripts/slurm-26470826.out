@@ -1,0 +1,5 @@
+/cm/local/apps/slurm/var/spool/job26470826/slurm_script: line 6: /pr_corrnet_subcutaneous.log: Read-only file system
+/cm/local/apps/slurm/var/spool/job26470826/slurm_script: line 7: /pr_corrnet_lung.log: Read-only file system
+/cm/local/apps/slurm/var/spool/job26470826/slurm_script: line 8: /pr_corrnet_thyroid.log: Read-only file system
+/cm/local/apps/slurm/var/spool/job26470826/slurm_script: line 9: /pr_corrnet_muscle.log: Read-only file system
+/cm/local/apps/slurm/var/spool/job26470826/slurm_script: line 10: /pr_corrnet_blood.log: Read-only file system

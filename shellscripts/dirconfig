@@ -1,0 +1,17 @@
+homeDir=`pwd | sed -e 's/\/shellscripts//g'`
+scriptDir=$homeDir/src
+datDir=$homeDir/data
+networksDir=$homeDir/networks
+rmdDir=$homeDir/publication_rmd
+figDir=$homeDir/publication_figures
+logDir=$homeDir/log
+resultDir=$homeDir/results
+plotDir=$homeDir/plots
+
+mkdir $datDir
+mkdir $networksDir
+mkdir $rmdDir
+mkdir $figDir
+mkdir $logDir
+mkdir $resultDir
+mkdir $plotDir
