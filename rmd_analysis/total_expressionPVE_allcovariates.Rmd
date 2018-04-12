@@ -1,0 +1,53 @@
+---
+title: "Total PVE by all covariates"
+output:
+  html_notebook: default
+  pdf_document: default
+---
+
+
+```{r}
+rm(list = ls())
+library(RcppEigen)
+load("../data/raw_protein_coding_withGC.Rdata")
+
+## none of the covariates have NA --> total sum of squares can be computed before hand
+dat.cov <- lapply(gtex.rse, function(tiss) {
+  cov.dat <- tiss@colData[,c(10, 11, 21:80, 83)]
+  cov.dat <- cov.dat[,-which(sapply(cov.dat, function(x) length(unique(x))) == 1)]
+  cov.dat <- cov.dat[, -which(colnames(cov.dat) %in% c("smunpdrd","smpthnts", "smtstptref", "smnabtch", "smnabtchd", "smgebtch"))] ## not enought unique entries in more than one category, < 50
+  cov.dat
+  })
+dat.expr <- lapply(gtex.rse, function(tiss) tiss@assays$data$counts)
+
+## compute the residuals
+residual.expr.dof <- mapply(function(x,y){
+  x <- t(x)
+  res.expr <- matrix(ncol = ncol(x), nrow = nrow(x))
+  print(paste("begin"))
+  for(i in 1:ncol(x)){
+    lm.out <- fastLm(x[,i]~1+. , data = y)
+    res.expr[,i] <- lm.out$residuals
+  }
+  list(residual_expression = res.expr, dof = lm.out$df.residual)
+}, dat.expr, dat.cov)
+
+residual.expr <- lapply(residual.expr.dof[1,], function(x) x)
+model.dof <- lapply(residual.expr.dof[2,], function(x) x)
+
+```
+Now that we have the expression data, residuals from the regression and dof - we can compute the adjusted r^2.
+```{r}
+tss <- lapply(dat.expr, function(x) (norm(x - rowMeans(x), type = "F"))^2)
+rss <- lapply(residual.expr, function(x) (norm(x, type = "F"))^2)
+
+total.covariate.pve <- vector("numeric", length = length(dat.expr))
+names(total.covariate.pve) <- names(dat.expr)
+for(i in 1:length(total.covariate.pve)){
+  n <- ncol(dat.expr[[i]])
+  r2 <- (tss[[i]] - rss[[i]])/tss[[i]]
+  total.covariate.pve[i] <- 1 - ((1-r2) * ((n - 1) / model.dof[[i]]))
+}
+
+total.covariate.pve
+```

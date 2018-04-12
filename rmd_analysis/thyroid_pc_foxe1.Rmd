@@ -1,0 +1,56 @@
+---
+title: "Thyroid"
+output:
+  pdf_document: default
+  html_notebook: default
+---
+
+Association of PC with FOXE1. Ensembl ID for FOXE1 = ENSG00000178919
+```{r}
+rm(list = ls())
+tiss <- "Thyroid"
+ensid <- "ENSG00000178919"
+## load subsetted raw expression data for thyroid
+load("../data/raw_subset.Rdata")
+
+## we only care about thyroid for this analysis - set dat.expr to thyroid
+dat.tiss.raw <- dat.expr[[tiss]]
+
+## which row is FOXE1?
+grep(ensid, rownames(dat.tiss.raw))
+ensid.dat <- rownames(dat.tiss.raw)[grep(ensid, rownames(dat.tiss.raw))]
+
+## load pc corrected data
+load("../data/pc_corrected.Rdata")
+## we only care about thyroid for this analysis - set dat.expr to thyroid
+dat.tiss.pc <- dat.expr[[tiss]]
+
+## which row is FOXE1?
+grep(ensid, rownames(dat.tiss.pc))
+print(ensid)
+print(rownames(dat.tiss.pc)[grep(ensid, rownames(dat.tiss.pc))])
+print(ensid.dat)
+```
+
+```{r}
+foxe.raw <- dat.tiss.raw[ensid.dat,]@assays$data$counts
+foxe.pc <- dat.tiss.pc[ensid.dat, ]@assays$data$counts
+```
+Association between raw foxe expression and PC
+```{r}
+# load PC loadings
+load("../data/pc_loadings.Rdata")
+raw.pve <- sapply(summary(lm(pc.loadings[[tiss]][,1:num.pc.estimates[[tiss]]]~t(foxe.raw))), function(x) x$r.squared)
+plot(c(1:num.pc.estimates[[tiss]]), raw.pve, col = "blue", pch = "*", xlab = "PC")
+```
+```{r}
+pc.pve <- sapply(summary(lm(pc.loadings[[tiss]][,1:num.pc.estimates[[tiss]]]~t(foxe.pc))), function(x) x$r.squared)*100
+plot(c(1:num.pc.estimates[[tiss]]), pc.pve, col = "red", pch = "*", xlab = "PC")
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+
