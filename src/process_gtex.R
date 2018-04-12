@@ -40,17 +40,20 @@ gtex.quarter.pc.corrected <- mcmapply(pc.correct, gtex.rse, num.pc.estimates, le
 
 ## split PC corrected data with variable genes
 gtex.pc.corrected <- mclapply(gtex.pc.corrected, function(x,gids){
-  gtex.sub <- x[which(rownames(x) %in% gids),]
+  gtex.sub <- x[gids,]
+#  gtex.sub <- x[which(rownames(x) %in% gids),]
   gtex.sub
   }, gene.ids)
 
 gtex.half.pc.corrected <- mclapply(gtex.half.pc.corrected, function(x,gids){
-  gtex.sub <- x[which(rownames(x) %in% gids),]
+#  gtex.sub <- x[which(rownames(x) %in% gids),]
+  gtex.sub <- x[gids,]
   gtex.sub
   }, gene.ids)
 
 gtex.quarter.pc.corrected <- mclapply(gtex.quarter.pc.corrected, function(x,gids){
-  gtex.sub <- x[which(rownames(x) %in% gids),]
+#  gtex.sub <- x[which(rownames(x) %in% gids),]
+  gtex.sub <- x[gids,]
   gtex.sub
   }, gene.ids)
 
@@ -64,7 +67,7 @@ gtex.quarter.pc.corrected <- mclapply(gtex.quarter.pc.corrected, function(x,gids
 #thyroid.foxe.pc <- thyroid.foxe.pc[which(rownames(thyroid.alternate.pc) %in% gene.ids),] ## select variable genes
 
 # GC content correction
-gc_estimate <- "/scratch/groups/abattle4/princy/claire_network/Network-Inference/gtex_networks/publication_rmd/gene_gc_content/gc_estimate_sample.RData"
+gc_estimate <- "/work-zfs/abattle4/parsana/networks_correction/publication_rmd/gene_gc_content/gc_estimate_sample.RData"
 load(gc_estimate)
 
 
@@ -74,7 +77,7 @@ gtex.rse.gc <- mapply(function(x,y){
 	x
 	}, gtex.rse.sub, gc.coeff)
 
-save(gtex.rse.gc, file = "/scratch/groups/abattle4/princy/claire_network/Network-Inference/gtex_networks/data/gtex_gc.RData")
+save(gtex.rse.gc, file = "/work-zfs/abattle4/parsana/networks_correction/data/gtex_gc.RData")
 
 
 # RIN correct

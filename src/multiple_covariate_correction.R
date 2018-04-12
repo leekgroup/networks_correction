@@ -3,9 +3,17 @@ library(dplyr)
 library(recount)
 
 # load data
-load("/work-zfs/abattle4/parsana/networks_correction/data/raw_subset.Rdata")
-load("/work-zfs/abattle4/parsana/networks_correction/publication_rmd/known_covariate_correction/tissue_pve.RData")
-
+inputargs <- commandArgs(TRUE)
+exp.fn <- inputargs[1]
+# exp.fn <- "/work-zfs/abattle4/parsana/networks_correction_v/data/raw_subset.Rdata"
+tiss.pve.fn <- inputargs[2]
+# tiss.pve.fn <- "/work-zfs/abattle4/parsana/networks_correction_v/results/tissue_pve.Rds"
+load(exp.fn)
+tiss.pve.list <- readRDS(tiss.pve.fn)
+save.fn <- inputargs[3]
+# save.fn <- "/work-zfs/abattle4/parsana/networks_correction_v/data/mc_corrected.Rdata"
+pve.plot <- tiss.pve.list$pve_plot
+tss.rss <- tiss.pve.list$tss_rss
 # variables to be used for multiple correction in each tissue
 sub.var <- pve.plot %>% filter(.id == "Subcutaneous") %>% 
 filter(!variable %in% tss.rss$Subcutaneous$remove) %>% 
@@ -38,6 +46,8 @@ gtex.rse.multicorr <- mapply(function(x,y){
 	dat.corrected <- lm(t(exp.dat)~., data = cov)$residual
 	SummarizedExperiment::assay(x, 1) <- t(dat.corrected)
 	x
-	}, gtex.rse.sub, var.regress)
+	}, dat.expr, var.regress)
 
-save(gtex.rse.multicorr, file = "/work-zfs/abattle4/parsana/networks_correction/data/gtex_multicorr.Rdata")
+dat.expr <- gtex.rse.multicorr
+
+save(dat.expr, file = save.fn)

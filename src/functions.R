@@ -34,28 +34,24 @@ pc.estimate = function(rse.object, less.pc = F, alt.pc = F, ...){
 	n.pc
 }
 
+## SVD to compute PC loadings
+compute.pc.loadings <- function(rse.object){
+  dat <- t(SummarizedExperiment::assay(rse.object, 1))
+  usv <- svd(scale(dat))
+  usv$u
+}
+
 ## pc correction
-pc.correct <- function(rse.object, n.pc, less.pc = F, alt.pc = F, frac = NULL, rm.pc = NULL){
+pc.correct <- function(rse.object, loadings, n.pc){
         dat <- t(SummarizedExperiment::assay(rse.object, 1))
-	n.pc <- c(1:n.pc)
-	if(less.pc){
-                print(less.pc)
-                n.pc <- c(1:round(max(n.pc) * frac))
-        }
-        if(alt.pc){
-                n.pc <- n.pc[-rm.pc]
-		print(n.pc)
-        }
-        ## singular value decomposition
-        ss <- svd(scale(dat))
+	      n.pc <- c(1:n.pc)
         print(paste("removing", n.pc, "PCs", nrow(dat)))
         ## use residuals from top n.pc principal components
-#       for (i in 1:dim(dat)[2]){
-        dat.adjusted <- lm(dat ~ ss$u[,n.pc])$residuals
-#       }
+        dat.adjusted <- lm(dat ~ loadings[,n.pc])$residuals
         SummarizedExperiment::assay(rse.object, 1) <- t(dat.adjusted)
         rse.object
 }
+
 ## Variable selection - per tissue
 ## select top n variable genes
 variable.selection <- function(rse.object, n, ...){

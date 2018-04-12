@@ -1,19 +1,18 @@
 rm(list=ls())
+
 ## load libraries
 library(recount)
-source("/home-3/pparsan1@jhu.edu/work2/princy/claire_network/Network-Inference/gtex_networks/src/functions.R")
-source("/home-3/pparsan1@jhu.edu/work2/princy/claire_network/Network-Inference/gtex_networks/src/config")
-#setwd("~/projects/claire_network/Network-Inference/gtex_networks/")
-#home.dir <- "~/projects/claire_network/Network-Inference/gtex_networks"
-setwd("/home-3/pparsan1@jhu.edu/work2/princy/claire_network/Network-Inference/gtex_networks/")
-home.dir <- "/home-3/pparsan1@jhu.edu/work2/princy/claire_network/Network-Inference/gtex_networks/"
+
+
+source("functions.R")
+source("config.R")
 
 ## create dir
 dir.create(datDir)
 
 ## download and scale reads
 download_study('SRP012682', type = 'rse-gene', outdir = datDir)
-load(paste(datDir, "rse_gene.Rdata", sep = "/"))
+load(paste(datDir, "rse_gene.Rdata", sep = ""))
 tissue.interest <- c("Subcutaneous", "Lung", "Thyroid", "Muscle", "Blood")
 
 ## scale counts by total coverage of the sample
@@ -23,7 +22,7 @@ rse_gene <- scale_counts(rse_gene, by = "auc", round = FALSE)
 rse_gene <- rse_gene[,which(colData(rse_gene)$smafrze=="USE ME")]
 
 ## only keep protein coding genes
-pc.genes <- read.delim("data/etc/protein_coding.txt", header = F)
+pc.genes <- read.delim(paste(homeDir, "etc/protein_coding.txt", sep = ""), header = F)
 rse_gene <- rse_gene[which(rownames(rse_gene) %in% pc.genes$V2),]
 
 
@@ -35,15 +34,15 @@ print(paste("Are all run values in phenotypes same order as colnames in rse_gene
 ## split rse object
 print(paste("Now splitting rse object by tissues"))
 
-gtex.rse <- sapply(tissue.interest, function(x){
-  idx <- grep(x, colData(rse_gene)$smtsd)
-  rse.dat <- rse_gene[,idx]
+gtex.rse <- sapply(tissue.interest, function(x, y){
+  idx <- grep(x, colData(y)$smtsd)
+  rse.dat <- y[,idx]
   rse.dat <- select.genes(rse.object = rse.dat, threshold = 0.1)
   counts <- SummarizedExperiment::assay(rse.dat, 1)
   # log2 transformation 
   SummarizedExperiment::assay(rse.dat, 1) <- log2(counts+2)
   rse.dat
-})
+}, rse_gene)
 
 rm(rse_gene)
 
@@ -66,5 +65,5 @@ for(i in 1:length(gtex.rse)){
   print(paste(dim(gtex.rse[[i]])))
 }
 
-## save rdata - adipose sub, lung, thyroid
-save(gtex.rse, file = "data/gtex_rse.Rdata")
+## save rdata - adipose sub, lung, thyroid, whole Blood
+save(gtex.rse, file = paste(datDir, "raw_protein_coding.Rdata",sep = ""))
