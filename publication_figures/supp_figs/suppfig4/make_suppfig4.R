@@ -6,14 +6,16 @@ library(reshape2)
 library(cowplot)
 #### test association of expression PCs with gc coefficients
 
-load("/work-zfs/abattle4/parsana/networks_correction/publication_rmd/gene_gc_content/analysis/gc_estimate_sample.RData")
-load("/work-zfs/abattle4/parsana/networks_correction/publication_rmd/gene_gc_content/analysis/pcs_removed.RData")
+	
+load("/work-zfs/abattle4/parsana/networks_correction/data/raw_subset.Rdata")
+load("/work-zfs/abattle4/parsana/networks_correction/data/pc_loadings.Rdata")
 
+	gc.coeff <- lapply(dat.expr, function(x) x$gc)
 	# fit linear model
 	gc.pc <- mapply(function(p,q){
 		lm.gc.fit <- lm(p ~ q)
 		lm.gc.fit
-		}, gtex.rse.pcs, gc.coeff, SIMPLIFY = FALSE
+		}, pc.loadings, gc.coeff, SIMPLIFY = FALSE
 		)
 	# extract p-values
 	gc.pc.pvals <- lapply(gc.pc, function(lm.gc.fit){
@@ -64,7 +66,7 @@ plot.pvals <- melt(gc.pc.pvals)
 ) + xlab("") + ylab("Principal Components") + theme(axis.text.x=element_text(colour="black"), axis.text.y=element_text(colour="black"))
 	ggsave("r2.png")
 
-fig2 <- plot_grid(pval.fig + theme(legend.position="bottom", legend.direction = "horizontal"),
+fig.out <- plot_grid(pval.fig + theme(legend.position="bottom", legend.direction = "horizontal"),
 	r2.fig + theme(legend.position="bottom", legend.direction="horizontal"),
 	align = 'vh',
            labels = c("a", "b"),
@@ -73,5 +75,5 @@ fig2 <- plot_grid(pval.fig + theme(legend.position="bottom", legend.direction = 
            )
 
 pdf("supp_fig4.pdf", height = 8.5, width = 7)
-print(fig2)
+print(fig.out)
 dev.off()
