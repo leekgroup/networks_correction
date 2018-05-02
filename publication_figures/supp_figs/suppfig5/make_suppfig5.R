@@ -31,12 +31,12 @@ plot.subcutaneous <- ggplot(plot.subcutaneous, aes(x = recall, y = precision, co
 plot.muscle <- readRDS("/work-zfs/abattle4/parsana/networks_correction/results/PR/pr_density_wgcna_canonical_muscle.Rds")
 plot.muscle <- select_category(cat.plot, plot.muscle)
 plot.muscle <- ggplot(plot.muscle, aes(x = recall, y = precision, colour = type)) + geom_point(size = 0.3) + 
-  xlab("Recall") + ylab("Precision")+ggtitle("Subcutaneous")
+  xlab("Recall") + ylab("Precision")+ggtitle("Muscle")
 
 plot.blood <- readRDS("/work-zfs/abattle4/parsana/networks_correction/results/PR/pr_density_wgcna_canonical_blood.Rds")
 plot.blood <- select_category(cat.plot, plot.blood)
 plot.blood <- ggplot(plot.blood, aes(x = recall, y = precision, colour = type)) + geom_point(size = 0.3) + 
-  xlab("Recall") + ylab("Precision")+ggtitle("Subcutaneous")
+  xlab("Recall") + ylab("Precision")+ggtitle("Blood")
 
 legend <- get_legend(plot.lung +
 	theme(legend.key = element_rect(color = "black", linetype = "solid", size = 0.5),
