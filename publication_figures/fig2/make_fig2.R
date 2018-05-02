@@ -1,28 +1,33 @@
-source("../../src/config")
+source("/work-zfs/abattle4/parsana/networks_correction/src/config.R")
 library(cowplot)
 
-## Read files
 theme_set(theme_cowplot(font_size=9)) # reduce default font size
+## categories to plot
+cat.plot <- c("PC", "half-PC", "quarter-PC", "RIN", "uncorrected")
 
-plot.thyroid <- read.csv("pr_table_thyroid.csv", row.names = 1)
-plot.thyroid <- plot.thyroid[-which(plot.thyroid$type %in% c("exonic rate","expeff", "gene GC%")),]
-plot.thyroid$type <- factor(plot.thyroid$type, levels = c("PC corrected","half-PC","quarter-PC", "RIN", "uncorrected"))
+# select category to plot
+select_category <- function(category_name, pr_table){
+	pr_table <- pr_table[which(pr_table$type %in% category_name),]
+}
+
+
+plot.thyroid <- readRDS("/work-zfs/abattle4/parsana/networks_correction/results/PR/pr_density_wgcna_canonical_thyroid.Rds")
+plot.thyroid <- select_category(cat.plot, plot.thyroid)
 plot.thyroid <- ggplot(plot.thyroid, aes(x = recall, y = precision, colour = type)) + geom_point(size = 0.3) + 
   xlab("Recall") + ylab("Precision")+ggtitle("Thyroid")
 
-plot.lung <- read.csv("pr_table_lung.csv", , row.names = 1)
-plot.lung <- plot.lung[-which(plot.lung$type %in% c("exonic rate","expeff", "gene GC%")),]
-plot.lung$type <- factor(plot.lung$type, levels = c("PC corrected","half-PC","quarter-PC", "RIN", "uncorrected"))
+plot.lung <- readRDS("/work-zfs/abattle4/parsana/networks_correction/results/PR/pr_density_wgcna_canonical_lung.Rds")
+plot.lung <- select_category(cat.plot, plot.lung)
 plot.lung <- ggplot(plot.lung, aes(x = recall, y = precision, colour = type)) + geom_point(size = 0.3) + 
   xlab("Recall") + ylab("Precision")+ggtitle("Lung")
 
-plot.sub <- read.csv("pr_table_sub.csv", row.names = 1)
-plot.sub <- plot.sub[-which(plot.sub$type %in% c("exonic rate","expeff", "gene GC%")),]
-plot.sub$type <- factor(plot.sub$type, levels = c("PC corrected","half-PC","quarter-PC", "RIN", "uncorrected"))
-plot.sub <- ggplot(plot.sub, aes(x = recall, y = precision, colour = type)) + geom_point(size = 0.3) + 
-  xlab("Recall") + ylab("Precision")+ggtitle("Adipose - Subcutaneous")
+plot.subcutaneous <- readRDS("/work-zfs/abattle4/parsana/networks_correction/results/PR/pr_density_wgcna_canonical_subcutaneous.Rds")
+plot.subcutaneous <- select_category(cat.plot, plot.subcutaneous)
+plot.subcutaneous <- ggplot(plot.subcutaneous, aes(x = recall, y = precision, colour = type)) + geom_point(size = 0.3) + 
+  xlab("Recall") + ylab("Precision")+ggtitle("Subcutaneous")
 
-fig2 <- plot_grid(plot.sub + xlim(0,0.13) + ylim(0, 0.35) + theme(legend.position="none"),
+
+fig2 <- plot_grid(plot.subcutaneous + xlim(0,0.13) + ylim(0, 0.35) + theme(legend.position="none"),
 	plot.thyroid + xlim(0,0.13) + ylim(0, 0.35) +  theme(legend.position="none"),
 	plot.lung + xlim(0,0.13) + ylim(0, 0.35) + theme(legend.position="none"),
 	align = 'vh',
