@@ -12,10 +12,10 @@ load("/work-zfs/abattle4/parsana/networks_correction/data/pc_loadings.Rdata")
 
 	gc.coeff <- lapply(dat.expr, function(x) x$gc)
 	# fit linear model
-	gc.pc <- mapply(function(p,q){
-		lm.gc.fit <- lm(p ~ q)
+	gc.pc <- mapply(function(p,q,r){
+		lm.gc.fit <- lm(p[,1:r] ~ q)
 		lm.gc.fit
-		}, pc.loadings, gc.coeff, SIMPLIFY = FALSE
+		}, pc.loadings, gc.coeff, num.pc.estimates, SIMPLIFY = FALSE
 		)
 	# extract p-values
 	gc.pc.pvals <- lapply(gc.pc, function(lm.gc.fit){
