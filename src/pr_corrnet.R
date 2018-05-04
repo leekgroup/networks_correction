@@ -5,10 +5,10 @@
 
 
 # require("knitr")
-# opts_knit$set(root.dir = "/work-zfs/abattle4/parsana/networks_correction_v/")
+# opts_knit$set(root.dir = "/work-zfs/abattle4/parsana/networks_correction/")
 rm(list = ls())
 
-setwd("/work-zfs/abattle4/parsana/networks_correction_v/")
+setwd("/work-zfs/abattle4/parsana/networks_correction/")
 
 library(reshape2)
 library(dplyr)
@@ -22,7 +22,7 @@ pathways.fn <- inputargs[3]
 plot.dir <- inputargs[4]
 res.dir <- inputargs [5]
 
-type.exp <- c("raw", "rin", "quarterpc", "halfpc", "pc")
+type.exp <- c("pc", "halfpc", "quarterpc", "rin", "gc", "mc", "exonicRate", "raw")
 
   # get gene ids - symbol mapping from recount dataset
 
@@ -64,7 +64,7 @@ type.exp <- c("raw", "rin", "quarterpc", "halfpc", "pc")
       })
       
     true.positive.list <- unique(unlist(true.positive.list))
-    true.positive.list <- true.positive.list[-which(is.na(true.positive.list))]
+    true.positive.list <- true.positive.list[which(!is.na(true.positive.list))]
     print("Total real edgelist size:")
     print(length(true.positive.list))
 
@@ -128,7 +128,7 @@ type.exp <- c("raw", "rin", "quarterpc", "halfpc", "pc")
 
 
   pr.plot <- do.call(rbind, type.net.bind)
-  pr.plot$type <- factor(pr.plot$type, levels = c("pc", "halfpc", "quarterpc", "rin", "raw"), labels = c("PC", "half-PC", "quarter-PC", "RIN", "uncorrected"))
+  pr.plot$type <- factor(pr.plot$type, levels = c("pc", "halfpc", "quarterpc", "rin", "gc", "mc", "exonicRate", "raw"), labels = c("PC", "half-PC", "quarter-PC", "RIN", "gene GC%", "multi-covariate", "exonic rate", "uncorrected"))
 
   # plot precision and recall
 

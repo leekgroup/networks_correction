@@ -20,8 +20,8 @@ tiss <- inputargs[1]
 pathways.fn <- inputargs[2]
 plot.dir <- inputargs[3]
 res.dir <- inputargs [4]
-save.fn <- inputargs[5]
-type.exp <- c("raw", "rin", "gc", "mc", "exonicRate", "quarterpc", "halfpc", "pc")
+
+type.exp <- c("raw", "rin", "quarterpc", "halfpc", "pc")
 
   # get gene ids - symbol mapping from recount dataset
 
@@ -71,7 +71,7 @@ type.exp <- c("raw", "rin", "gc", "mc", "exonicRate", "quarterpc", "halfpc", "pc
   # for each network within the tissue generate a fully connected subgraph
   tiss.net <- lapply(type.exp, function(x,y,z){
     print(paste("Loading network", x))
-    load(paste("networks", x, "wgcna_networks.Rdata", sep = "/"))
+    load(paste("networks", x, "signed_wgcna_networks.Rdata", sep = "/"))
     
     # get module assignments for each cut-off networks
     this.net <- lapply(dat.net[[y]], function(eachNet, gene.symbol){
@@ -100,7 +100,7 @@ type.exp <- c("raw", "rin", "gc", "mc", "exonicRate", "quarterpc", "halfpc", "pc
   names(tiss.net) <- type.exp
 
 
-  type.net <- vector("list", length = length(type.exp))
+  type.net <- vector("list", length = 5)
   names(type.net) <- type.exp 
   for(t in type.exp){
     print(t)
@@ -138,14 +138,14 @@ type.exp <- c("raw", "rin", "gc", "mc", "exonicRate", "quarterpc", "halfpc", "pc
   # type.net.bind[[5]]$type <- "PC"
 
   pr.plot <- do.call(rbind, type.net.bind)
-  pr.plot$type <- factor(pr.plot$type, levels = c("pc", "halfpc", "quarterpc", "rin", "gc", "mc", "exonicRate", "raw"), labels = c("PC", "half-PC", "quarter-PC", "RIN", "gene GC%", "multi-covariate", "exonic rate", "uncorrected"))
+  pr.plot$type <- factor(pr.plot$type, levels = c("pc", "halfpc", "quarterpc", "rin", "raw"), labels = c("PC", "half-PC", "quarter-PC", "RIN", "uncorrected"))
 
   # plot precision and recall
 
   fig_pr <- ggplot(pr.plot, aes(x = recall, y = precision, col = type))+ geom_point(size = 0.3) + ggtitle(tiss) + xlim(0, 0.20)+ ylim(0.0, 0.40)
-  png(paste(plot.dir, "/PR/wgcna_networks_", save.fn, ".png", sep = ""), height = 2, width = 4, units = "in", res = 400)
+  png(paste(plot.dir, "/PR/signed_wgcna_networks_", tiss, ".png", sep = ""), height = 2, width = 4, units = "in", res = 400)
   print(fig_pr)
   dev.off()
 
   ## save file
-  saveRDS(pr.plot, file = paste(res.dir, "/PR/pr_density_wgcna_", save.fn, ".Rds", sep = "" ))
+  saveRds(pr.plot, file = paste(res.dir, "/PR/signed_pr_density_wgcna_", tiss, ".Rds", sep = "" ))

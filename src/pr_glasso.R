@@ -1,6 +1,6 @@
 rm(list = ls())
 
-setwd("/work-zfs/abattle4/parsana/networks_correction_v/")
+setwd("/work-zfs/abattle4/parsana/networks_correction/")
 
 library(reshape2)
 library(dplyr)
@@ -12,8 +12,9 @@ tiss <- inputargs[1]
 pathways.fn <- inputargs[2]
 plot.dir <- inputargs[3]
 res.dir <- inputargs [4]
+save.fn <- inputargs[5]
 
-type.exp <- c("raw", "rin", "quarterpc", "halfpc", "pc")
+type.exp <- c("pc", "halfpc", "quarterpc", "rin", "gc", "mc", "exonicRate", "raw")
 
   # get gene ids - symbol mapping from recount dataset
 
@@ -51,14 +52,14 @@ type.exp <- c("raw", "rin", "quarterpc", "halfpc", "pc")
       })
       
     true.positive.list <- unique(unlist(true.positive.list))
-    true.positive.list <- true.positive.list[-which(is.na(true.positive.list))]
+    true.positive.list <- true.positive.list[which(!is.na(true.positive.list))]
     print("Total real edgelist size:")
     print(length(true.positive.list))
 
 
   tiss.net <- lapply(type.exp, function(x,y,z){
     print(paste("Loading dataset", y, x))
-    load(paste("networks/", x, "/", "centered/",y, "_glasso_networks.Rdata", sep = ""))
+    load(paste("networks/", x, "/",y, "_glasso_networks.Rdata", sep = ""))
     
 
     net.edges <- lapply(dat.net, function(eachNet, z_infunc){
@@ -84,7 +85,7 @@ type.exp <- c("raw", "rin", "quarterpc", "halfpc", "pc")
 
   names(tiss.net) <- type.exp
   
-  type.net <- vector("list", length = 5)
+  type.net <- vector("list", length = length(type.exp))
   names(type.net) <- type.exp 
   for(t in type.exp){
     print(t)
@@ -113,14 +114,13 @@ type.exp <- c("raw", "rin", "quarterpc", "halfpc", "pc")
 
 
   pr.plot <- do.call(rbind, type.net.bind)
-  pr.plot$type <- factor(pr.plot$type, levels = c("pc", "halfpc", "quarterpc", "rin", "raw"), labels = c("PC", "half-PC", "quarter-PC", "RIN", "uncorrected"))
-
+  pr.plot$type <- factor(pr.plot$type, levels = c("pc", "halfpc", "quarterpc", "rin", "gc", "mc", "exonicRate", "raw"), labels = c("PC", "half-PC", "quarter-PC", "RIN", "gene GC%", "multi-covariate", "exonic rate", "uncorrected"))
   # plot precision and recall
 
   fig_pr <- ggplot(pr.plot, aes(x = recall, y = precision, col = type))+ geom_point(size = 0.1) + ggtitle(tiss)
-  png(paste(plot.dir, "/PR/centered_glasso_networks_", tiss, ".png", sep = ""), height = 2, width = 4, units = "in", res = 400)
+  png(paste(plot.dir, "/PR/glasso_networks_", save.fn, ".png", sep = ""), height = 2, width = 4, units = "in", res = 400)
   print(fig_pr)
   dev.off()
 
   ## save file
-  saveRDS(pr.plot, file = paste(res.dir, "/PR/pr_density_centered_glasso_networks_", tiss, ".Rds", sep = "" ))
+  saveRDS(pr.plot, file = paste(res.dir, "/PR/pr_density_glasso_networks_", save.fn, ".Rds", sep = "" ))
