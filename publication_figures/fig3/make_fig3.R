@@ -27,9 +27,9 @@ plot.subcutaneous <- ggplot(plot.subcutaneous, aes(x = recall, y = precision, co
   xlab("Recall") + ylab("Precision")+ggtitle("Subcutaneous")
 
 
-fig3 <- plot_grid(plot.subcutaneous + xlim(0,0.15) + ylim(0, 0.9) + theme(legend.position="none"),
-  plot.thyroid + xlim(0,0.15) + ylim(0, 0.9) +  theme(legend.position="none"),
-  plot.lung + xlim(0,0.15) + ylim(0, 0.9) + theme(legend.position="none"),
+fig3 <- plot_grid(plot.subcutaneous + xlim(0,0.015) + ylim(0, 0.9) + theme(legend.position="none"),
+  plot.thyroid + xlim(0,0.015) + ylim(0, 0.9) +  theme(legend.position="none"),
+  plot.lung + xlim(0,0.015) + ylim(0, 0.9) + theme(legend.position="none"),
   align = 'vh',
            labels = c("a", "b", "c"),
            hjust = -1,
