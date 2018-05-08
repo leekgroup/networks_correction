@@ -1,92 +1,89 @@
-rm(list = ls())
-load("fig4-wgcna.RData")
-load("fig4-glasso.RData")
-library(ggplot2)
+source("/work-zfs/abattle4/parsana/networks_correction/src/config.R")
 library(cowplot)
-## Read files
+
 theme_set(theme_cowplot(font_size=9)) # reduce default font size
+## categories to plot
+cat.plot <- c("PC", "half-PC", "quarter-PC", "RIN", "uncorrected")
+
+# select category to plot
+select_category <- function(category_name, pr_table){
+  pr_table <- pr_table[which(pr_table$type %in% category_name),]
+  pr_table
+}
+
+add_densityx <- function(pr_table, x_axis){
+  rep.num <- nrow(pr_table)/length(x_axis)
+  pr_table$xaxis <- rep(x_axis, rep.num)
+  pr_table
+}
+
+plot.thyroid <- readRDS("/work-zfs/abattle4/parsana/networks_correction/results/PR/pr_density_wgcna_canonical_thyroid.Rds")
+plot.thyroid <- select_category(cat.plot, plot.thyroid)
+plot.thyroid <- add_densityx(plot.thyroid, cutheights)
+plot.thyroid <- ggplot(plot.thyroid, aes(x = xaxis, y = density, colour = type)) + geom_point(size = 0.3) + 
+  xlab("Cutheights") + ylab("# of edges")+ggtitle("Thyroid")
+
+plot.lung <- readRDS("/work-zfs/abattle4/parsana/networks_correction/results/PR/pr_density_wgcna_canonical_lung.Rds")
+plot.lung <- select_category(cat.plot, plot.lung)
+plot.lung <- add_densityx(plot.lung, cutheights)
+plot.lung <- ggplot(plot.lung, aes(x = xaxis, y = density, colour = type)) + geom_point(size = 0.3) + 
+  xlab("Cutheights") + ylab("# of edges")+ggtitle("Lung")
+
+plot.subcutaneous <- readRDS("/work-zfs/abattle4/parsana/networks_correction/results/PR/pr_density_wgcna_canonical_subcutaneous.Rds")
+plot.subcutaneous <- select_category(cat.plot, plot.subcutaneous)
+plot.subcutaneous <- add_densityx(plot.subcutaneous, cutheights)
+plot.subcutaneous <- ggplot(plot.subcutaneous, aes(x = xaxis, y = density, colour = type)) + geom_point(size = 0.3) + 
+  xlab("Cutheights") + ylab("# of edges")+ggtitle("Adipose - Subcutaneous")
 
 
-#### WGCNA #####
-plot.wgcna.thyroid <- ggplot(plot.wgcna.thyroid, aes(x = Var1, y = value, colour = Var2)) + geom_point(size = 0.3) + 
-#	theme(text = element_text(size=7))+
-	xlab("Cutheight") + ylab("# of edges")+ggtitle("Thyroid")
-
-
-
-plot.wgcna.muscle <- ggplot(plot.wgcna.muscle, aes(x = Var1, y = value, colour = Var2)) + geom_point(size = 0.3) + 
-#	theme(text = element_text(size=7)) +
-	xlab("Cutheight") + ylab("# of edges")+ggtitle("Muscle - Skeletal")
-
-
-plot.wgcna.lung <- ggplot(plot.wgcna.lung, aes(x = Var1, y = value, colour = Var2)) + geom_point(size = 0.3) + 
-#	theme(text = element_text(size=7), legend.title=element_blank())+
-	xlab("Cutheight") + ylab("# of edges")+ggtitle("Lung")
-
-
-plot.wgcna.blood <- ggplot(plot.wgcna.blood, aes(x = Var1, y = value, colour = Var2)) + geom_point(size = 0.3) + 
-#	theme(text = element_text(size=7))+
-	xlab("Cutheight") + ylab("# of edges")+ggtitle("Whole Blood")
-
-
-plot.wgcna.sub <- ggplot(plot.wgcna.sub, aes(x = Var1, y = value, colour = Var2)) + geom_point(size = 0.3) + 
-#	theme(text = element_text(size=7))+
-	xlab("Cutheight") + ylab("# of edges")+ggtitle("Adipose - Subcutaneous")
-
-fig4.wgcna <- plot_grid(plot.wgcna.sub + xlim(1.0,0.9) + theme(legend.position="none"),
-	plot.wgcna.thyroid + xlim(1.0,0.9) +  theme(legend.position="none"),
-	plot.wgcna.lung + xlim(1.0,0.9) + theme(legend.position="none"),
-	align = 'vh',
+fig4.wgcna <- plot_grid(plot.subcutaneous + xlim(1.0,0.9) + theme(legend.position="none"),
+  plot.thyroid + xlim(1.0,0.9) +  theme(legend.position="none"),
+  plot.lung + xlim(1.0,0.9) + theme(legend.position="none"),
+  align = 'vh',
            labels = c("a", "b", "c"),
            hjust = -1,
            nrow = 1
            )
-legend.wgcna <- get_legend(plot.wgcna.lung +
-	theme(legend.key = element_rect(color = "black", linetype = "solid", size = 0.5),
-	legend.key.size = unit(0.3, "cm"), legend.key.height=unit(1,"line")) + 
-	guides(colour = guide_legend(override.aes = list(size= 1)), fill=guide_legend("type")))
+legend.wgcna <- get_legend(plot.lung +
+  theme(legend.key = element_rect(color = "black", linetype = "solid", size = 0.5),
+  legend.key.size = unit(0.3, "cm"), legend.key.height=unit(1,"line")) + 
+  guides(colour = guide_legend(override.aes = list(size= 1)), fill=guide_legend("type")))
 
 fig4.a <- plot_grid( fig4.wgcna, legend.wgcna, rel_widths = c(3, .4))
 
-##### GLASSO #####
-plot.glasso.thyroid <- ggplot(plot.glasso.thyroid, aes(x = Var1, y = value, colour = Var2)) + geom_point(size = 0.3) + 
-#	theme(text = element_text(size=7))+
-	xlab("Penalty") + ylab("# of edges")+ggtitle("Thyroid")
+## Glasso
+
+plot.thyroid <- readRDS("/work-zfs/abattle4/parsana/networks_correction/results/PR/pr_density_glasso_networks_canonical_thyroid.Rds")
+plot.thyroid <- select_category(cat.plot, plot.thyroid)
+plot.thyroid <- add_densityx(plot.thyroid, lambda)
+plot.thyroid <- ggplot(plot.thyroid, aes(x = xaxis, y = density, colour = type)) + geom_point(size = 0.3) + 
+  xlab("Penalty") + ylab("# of edges")+ggtitle("Thyroid")
+
+plot.lung <- readRDS("/work-zfs/abattle4/parsana/networks_correction/results/PR/pr_density_glasso_networks_canonical_lung.Rds")
+plot.lung <- select_category(cat.plot, plot.lung)
+plot.lung <- add_densityx(plot.lung, lambda)
+plot.lung <- ggplot(plot.lung, aes(x = xaxis, y = density, colour = type)) + geom_point(size = 0.3) + 
+  xlab("Penalty") + ylab("# of edges")+ggtitle("Lung")
+
+plot.subcutaneous <- readRDS("/work-zfs/abattle4/parsana/networks_correction/results/PR/pr_density_glasso_networks_canonical_subcutaneous.Rds")
+plot.subcutaneous <- select_category(cat.plot, plot.subcutaneous)
+plot.subcutaneous <- add_densityx(plot.subcutaneous, lambda)
+plot.subcutaneous <- ggplot(plot.subcutaneous, aes(x = xaxis, y = density, colour = type)) + geom_point(size = 0.3) + 
+  xlab("Penalty") + ylab("# of edges")+ggtitle("Adipose - Subcutaneous")
 
 
-
-plot.glasso.muscle <- ggplot(plot.glasso.muscle, aes(x = Var1, y = value, colour = Var2)) + geom_point(size = 0.3) + 
-	scale_color_manual(labels = c("T999", "T888")) +
-#	theme(text = element_text(size=7)) +
-	xlab("Penalty") + ylab("# of edges")+ggtitle("Muscle - Skeletal")
-
-
-plot.glasso.lung <- ggplot(plot.glasso.lung, aes(x = Var1, y = value, colour = Var2)) + geom_point(size = 0.3) + 
-#	theme(text = element_text(size=7), legend.title=element_blank())+
-	xlab("Penalty") + ylab("# of edges")+ggtitle("Lung")
-
-
-plot.glasso.blood <- ggplot(plot.glasso.blood, aes(x = Var1, y = value, colour = Var2)) + geom_point(size = 0.3) + 
-#	theme(text = element_text(size=7))+
-	xlab("Penalty") + ylab("# of edges")+ggtitle("Whole Blood")
-
-
-plot.glasso.sub <- ggplot(plot.glasso.sub, aes(x = Var1, y = value, colour = Var2)) + geom_point(size = 0.3) + 
-#	theme(text = element_text(size=7))+
-	xlab("Penalty") + ylab("# of edges")+ggtitle("Adipose - Subcutaneous")
-
-fig4.glasso <- plot_grid(plot.glasso.sub + xlim(0.3,1.0) + theme(legend.position="none"),
-	plot.glasso.thyroid + xlim(0.3,1.0) +  theme(legend.position="none"),
-	plot.glasso.lung + xlim(0.3,1.0) + theme(legend.position="none"),
-	align = 'vh',
-           labels = c("d", "e", "f"),
+fig4.glasso <- plot_grid(plot.subcutaneous + xlim(0.3,1.0) + theme(legend.position="none"),
+  plot.thyroid + xlim(0.3,1.0) +  theme(legend.position="none"),
+  plot.lung + xlim(0.3,1.0) + theme(legend.position="none"),
+  align = 'vh',
+           labels = c("a", "b", "c"),
            hjust = -1,
            nrow = 1
            )
-legend.glasso <- get_legend(plot.glasso.lung +
-	theme(legend.key = element_rect(color = "black", linetype = "solid", size = 0.5),
-	legend.key.size = unit(0.3, "cm"), legend.key.height=unit(1,"line")) + 
-	guides(colour = guide_legend(override.aes = list(size= 1)),fill=guide_legend("type")))
+legend.glasso <- get_legend(plot.lung +
+  theme(legend.key = element_rect(color = "black", linetype = "solid", size = 0.5),
+  legend.key.size = unit(0.3, "cm"), legend.key.height=unit(1,"line")) + 
+  guides(colour = guide_legend(override.aes = list(size= 1)), fill=guide_legend("type")))
 
 fig4.b <- plot_grid( fig4.glasso, legend.glasso, rel_widths = c(3, .4))
 
