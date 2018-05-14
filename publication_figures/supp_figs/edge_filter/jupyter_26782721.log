@@ -1,0 +1,21 @@
+Thu Apr 26 18:48:48 EDT 2018
+compute0676
+/work-zfs/abattle4/parsana/networks_correction/publication_figures/supp_figs/edge_filter
+
+Starting Jupyter Notebook on port 21465 on the compute0676 server.
+
+SSH tunnel command: ssh -NL 8080:compute0676:21465 pparsan1@jhu.edu@gateway2.marcc.jhu.edu
+
+Local URI: http://localhost:8080
+[I 18:48:59.817 NotebookApp] [nb_conda_kernels] enabled, 2 kernels found
+[W 18:49:01.537 NotebookApp] WARNING: The notebook server is listening on all IP addresses and not using encryption. This is not recommended.
+[W 18:49:01.537 NotebookApp] WARNING: The notebook server is listening on all IP addresses and not using authentication. This is highly insecure and not recommended.
+[I 18:49:02.150 NotebookApp] ✓ nbpresent HTML export ENABLED
+[W 18:49:02.150 NotebookApp] ✗ nbpresent PDF export DISABLED: No module named nbbrowserpdf.exporters.pdf
+[I 18:49:02.178 NotebookApp] [nb_conda] enabled
+[I 18:49:02.711 NotebookApp] [nb_anacondacloud] enabled
+[I 18:49:02.714 NotebookApp] Serving notebooks from local directory: /work-zfs/abattle4/parsana/networks_correction/publication_figures/supp_figs/edge_filter
+[I 18:49:02.715 NotebookApp] 0 active kernels 
+[I 18:49:02.715 NotebookApp] The Jupyter Notebook is running at: http://[all ip addresses on your system]:21465/
+[I 18:49:02.715 NotebookApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
+slurmstepd: error: *** JOB 26782721 ON compute0676 CANCELLED AT 2018-04-26T18:53:16 ***

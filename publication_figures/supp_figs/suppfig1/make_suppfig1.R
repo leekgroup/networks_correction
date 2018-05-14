@@ -1,67 +1,74 @@
-source("/work-zfs/abattle4/parsana/networks_correction/src/config")
+source("/work-zfs/abattle4/parsana/networks_correction/src/config.R")
 library(cowplot)
 
-## Read files
-theme_set(theme_cowplot(font_size=12)) # reduce default font size
+theme_set(theme_cowplot(font_size=9)) # reduce default font size
+## categories to plot
+cat.plot <- c("PC", "half-PC", "quarter-PC", "RIN", "uncorrected")
 
-wgcna.plot.muscle <- read.csv("/work-zfs/abattle4/parsana/networks_correction/publication_figures/fig2/pr_table_muscle.csv", 
-	row.names = 1, stringsAsFactors = F)
-wgcna.plot.muscle <- wgcna.plot.muscle[-which(wgcna.plot.muscle$type %in% c("exonic rate","expeff", "gene GC%")),]
-wgcna.plot.muscle$type <- factor(wgcna.plot.muscle$type, levels = c("PC corrected","half-PC","quarter-PC", "RIN", "uncorrected"))
-wgcna.plot.muscle <- ggplot(wgcna.plot.muscle, aes(x = recall, y = precision, colour = type)) + geom_point(size = 0.3) + 
-	xlab("Recall") + ylab("Precision")+ggtitle("Muscle - Skeletal")
+# select category to plot
+select_category <- function(category_name, pr_table){
+  pr_table <- pr_table[which(pr_table$type %in% category_name),]
+  pr_table
+}
 
-wgcna.plot.blood <- read.csv("/work-zfs/abattle4/parsana/networks_correction/publication_figures/fig2/pr_table_blood.csv", 
-	row.names = 1, stringsAsFactors = F)
-wgcna.plot.blood <- wgcna.plot.blood[-which(wgcna.plot.blood$type %in% c("exonic rate", "expeff", "gene GC%")),]
-wgcna.plot.blood$type <- factor(wgcna.plot.blood$type, levels = c("PC corrected","half-PC","quarter-PC", "RIN", "uncorrected"))
-wgcna.plot.blood <- ggplot(wgcna.plot.blood, aes(x = recall, y = precision, colour = type)) + geom_point(size = 0.3) + 
-	xlab("Recall") + ylab("Precision")+ggtitle("Whole Blood")
 
-glasso.plot.muscle <- read.csv("/work-zfs/abattle4/parsana/networks_correction/publication_figures/fig3/pr_table_muscle.csv", 
-	row.names = 1, stringsAsFactors = F)
-glasso.plot.muscle <- glasso.plot.muscle[-which(glasso.plot.muscle$type %in% c("exonic rate","expeff", "gene GC%")),]
-glasso.plot.muscle$type <- factor(glasso.plot.muscle$type, levels = c("PC corrected","half-PC","quarter-PC", "RIN", "uncorrected"))
-glasso.plot.muscle <- ggplot(glasso.plot.muscle, aes(x = recall, y = precision, colour = type)) + geom_point(size = 0.3) + 
-	xlab("Recall") + ylab("Precision")+ggtitle("Muscle-Skeletal")
 
-glasso.plot.blood <- read.csv("/work-zfs/abattle4/parsana/networks_correction/publication_figures/fig3/pr_table_blood.csv", 
-	row.names = 1, stringsAsFactors = F)
-glasso.plot.blood <- glasso.plot.blood[-which(glasso.plot.blood$type %in% c("exonic rate", "expeff", "gene GC%")),]
-glasso.plot.blood$type <- factor(glasso.plot.blood$type, levels = c("PC corrected","half-PC","quarter-PC", "RIN", "uncorrected"))
-glasso.plot.blood <- ggplot(glasso.plot.blood, aes(x = recall, y = precision, colour = type)) + geom_point(size = 0.3)+
-		     xlab("Recall") + ylab("Precision")+ggtitle("Whole Blood") 
+plot.blood <- readRDS("/work-zfs/abattle4/parsana/networks_correction/results/PR/pr_density_wgcna-signed_canonical_blood.Rds")
+plot.blood <- select_category(cat.plot, plot.blood)
+plot.blood <- ggplot(plot.blood, aes(x = recall, y = precision, colour = type)) + geom_point(size = 0.3) + 
+  xlab("Recall") + ylab("Precision")+ggtitle("Whole Blood")
 
-supp.fig.p1 <- plot_grid(wgcna.plot.blood + xlim(0,0.16) + ylim(0, 0.35) + theme(legend.position="none"),
-	wgcna.plot.muscle + xlim(0,0.16) + ylim(0, 0.35) +  theme(legend.position="none"),
-	align = 'vh',
-           labels = c("a", "b"),
+plot.muscle <- readRDS("/work-zfs/abattle4/parsana/networks_correction/results/PR/pr_density_wgcna-signed_canonical_muscle.Rds")
+plot.muscle <- select_category(cat.plot, plot.muscle)
+plot.muscle <- ggplot(plot.muscle, aes(x = recall, y = precision, colour = type)) + geom_point(size = 0.3) + 
+  xlab("Recall") + ylab("Precision")+ggtitle("Skeletal Muscle")
+
+suppfig1.wgcna <- plot_grid(plot.blood + xlim(0,0.07) + ylim(0, 0.5) +  theme(legend.position="none"),
+  plot.muscle + xlim(0,0.07) + ylim(0, 0.5) + theme(legend.position="none"),
+  align = 'vh',
+           labels = c("a", "b", "c"),
            hjust = -1,
            nrow = 1
            )
-wgcna.legend <- get_legend(wgcna.plot.blood +
-	theme(legend.key = element_rect(color = "black", linetype = "solid", size = 0.5),
-	legend.key.size = unit(0.3, "cm"), legend.key.height=unit(1.5,"line")) + 
-	guides(colour = guide_legend(override.aes = list(size= 1))))
 
-supp.fig.p1 <- plot_grid( supp.fig.p1, wgcna.legend, rel_widths = c(3, .4))
+legend.wgcna <- get_legend(plot.blood +
+  theme(legend.key = element_rect(color = "black", linetype = "solid", size = 0.5),
+  legend.key.size = unit(0.3, "cm"), legend.key.height=unit(1.5,"line")) + 
+  guides(colour = guide_legend(override.aes = list(size= 1))))
 
-supp.fig.p2 <- plot_grid(glasso.plot.blood + xlim(0,0.013) + ylim(0, 0.75) + theme(legend.position="none"),
-	glasso.plot.muscle + xlim(0,0.013) + ylim(0, 0.75) +  theme(legend.position="none"),
-	align = 'vh',
-           labels = c("c", "d"),
+
+suppfig1.a <- plot_grid( suppfig1.wgcna, legend.wgcna, rel_widths = c(3, .4))
+
+## Glasso
+
+plot.blood <- readRDS("/work-zfs/abattle4/parsana/networks_correction/results/PR/pr_density_glasso_networks_canonical_blood.Rds")
+plot.blood <- select_category(cat.plot, plot.blood)
+plot.blood <- ggplot(plot.blood, aes(x = recall, y = precision, colour = type)) + geom_point(size = 0.3) + 
+  xlab("Recall") + ylab("Precision")+ggtitle("Whole Blood")
+
+plot.muscle <- readRDS("/work-zfs/abattle4/parsana/networks_correction/results/PR/pr_density_glasso_networks_canonical_muscle.Rds")
+plot.muscle <- select_category(cat.plot, plot.muscle)
+plot.muscle <- ggplot(plot.muscle, aes(x = recall, y = precision, colour = type)) + geom_point(size = 0.3) + 
+  xlab("Recall") + ylab("Precision")+ggtitle("Skeletal Muscle")
+
+suppfig1.glasso <- plot_grid(plot.blood + xlim(0, 0.02) + ylim(0, 0.9) +  theme(legend.position="none"),
+  plot.muscle + xlim(0, 0.02) + ylim(0, 0.9) + theme(legend.position="none"),
+  align = 'vh',
+           labels = c("a", "b", "c"),
            hjust = -1,
            nrow = 1
            )
-glasso.legend <- get_legend(glasso.plot.muscle +
-	theme(legend.key = element_rect(color = "black", linetype = "solid", size = 0.5),
-	legend.key.size = unit(0.3, "cm"), legend.key.height=unit(1.5,"line")) + 
-	guides(colour = guide_legend(override.aes = list(size= 1))))
 
+legend.glasso <- get_legend(plot.blood +
+  theme(legend.key = element_rect(color = "black", linetype = "solid", size = 0.5),
+  legend.key.size = unit(0.3, "cm"), legend.key.height=unit(1.5,"line")) + 
+  guides(colour = guide_legend(override.aes = list(size= 1))))
 
-supp.fig.p2 <- plot_grid( supp.fig.p2, glasso.legend, rel_widths = c(3, .4))
+suppfig1.b <- plot_grid( suppfig1.glasso, legend.glasso, rel_widths = c(3, .4))
 
-merged.supp.fig <- plot_grid(supp.fig.p1, supp.fig.p2, nrow = 2)
-pdf("supp_fig1.pdf", height = 7.2, width = 7.2)
-print(merged.supp.fig)
+suppfig1 <- plot_grid(suppfig1.a, suppfig1.b, nrow = 2)
+
+pdf("suppfig1.pdf", height = 7.2, width = 7.2)
+print(suppfig1)
 dev.off()
+

@@ -8,6 +8,7 @@ cat.plot <- c("PC", "half-PC", "quarter-PC", "RIN", "uncorrected")
 # select category to plot
 select_category <- function(category_name, pr_table){
   pr_table <- pr_table[which(pr_table$type %in% category_name),]
+  pr_table
 }
 
 
@@ -24,7 +25,7 @@ plot.lung <- ggplot(plot.lung, aes(x = recall, y = precision, colour = type)) + 
 plot.subcutaneous <- readRDS("/work-zfs/abattle4/parsana/networks_correction/results/PR/pr_density_glasso_networks_canonical_subcutaneous.Rds")
 plot.subcutaneous <- select_category(cat.plot, plot.subcutaneous)
 plot.subcutaneous <- ggplot(plot.subcutaneous, aes(x = recall, y = precision, colour = type)) + geom_point(size = 0.3) + 
-  xlab("Recall") + ylab("Precision")+ggtitle("Subcutaneous")
+  xlab("Recall") + ylab("Precision")+ggtitle("Adipose - Subcutaneous")
 
 
 fig3 <- plot_grid(plot.subcutaneous + xlim(0,0.015) + ylim(0, 0.9) + theme(legend.position="none"),
