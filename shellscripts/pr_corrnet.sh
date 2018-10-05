@@ -4,7 +4,7 @@
 #SBATCH --partition=unlimited
 
 source ~/.bash_profile
-source /work-zfs/abattle4/parsana/networks_correction_v/shellscripts/dirconfig
+source /work-zfs/abattle4/parsana/networks_correction/shellscripts/dirconfig
 
 cd $scriptDir
 
