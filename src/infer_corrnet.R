@@ -12,7 +12,7 @@ save.fn <- inputargs[3]
 load(dat.fn)
 
 dat.expr <- lapply(dat.expr, function(x){
-		x <- normalize(x)
+		x <- q_normalize(x)
 		x
 	})
 

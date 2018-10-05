@@ -148,4 +148,4 @@ type.exp <- c("raw", "rin", "quarterpc", "halfpc", "pc")
   dev.off()
 
   ## save file
-  saveRds(pr.plot, file = paste(res.dir, "/PR/signed_pr_density_wgcna_", tiss, ".Rds", sep = "" ))
+  saveRDS(pr.plot, file = paste(res.dir, "/PR/signed_pr_density_wgcna_", tiss, ".Rds", sep = "" ))

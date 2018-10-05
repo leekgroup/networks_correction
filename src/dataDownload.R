@@ -6,14 +6,13 @@ library(recount)
 
 source("functions.R")
 source("config.R")
-
 ## create dir
 dir.create(datDir)
 
 ## download and scale reads
 download_study('SRP012682', type = 'rse-gene', outdir = datDir)
 load(paste(datDir, "rse_gene.Rdata", sep = ""))
-tissue.interest <- c("Subcutaneous", "Lung", "Thyroid", "Muscle", "Blood")
+tissue.interest <- c("Subcutaneous", "Lung", "Thyroid", "Muscle", "Blood", "Artery - Tibial", "Nerve - Tibial", "Skin - Sun Exposed")
 
 ## scale counts by total coverage of the sample
 rse_gene <- scale_counts(rse_gene, by = "auc", round = FALSE)
@@ -22,8 +21,11 @@ rse_gene <- scale_counts(rse_gene, by = "auc", round = FALSE)
 rse_gene <- rse_gene[,which(colData(rse_gene)$smafrze=="USE ME")]
 
 ## only keep protein coding genes
-pc.genes <- read.delim(paste(homeDir, "etc/protein_coding.txt", sep = ""), header = F)
+pc.genes <- read.delim(paste(datDir, "etc/protein_coding.txt", sep = ""), header = F)
+pc.genes <- pc.genes[!pc.genes$V1 %in% c("chrM","chrY"),]
+overlapping_genes <- read.delim(paste(datDir, "etc/ensembl_ids_overlapping_genes.txt", sep = ""), stringsAsFactors = F)
 rse_gene <- rse_gene[which(rownames(rse_gene) %in% pc.genes$V2),]
+rse_gene <- rse_gene[-which(rownames(rse_gene) %in% overlapping_genes$x),]
 
 
 ## summary
@@ -45,6 +47,11 @@ gtex.rse <- sapply(tissue.interest, function(x, y){
 }, rse_gene)
 
 rm(rse_gene)
+
+names(gtex.rse) <- c("Subcutaneous", "Lung", "Thyroid", "Muscle", "Blood", "Artery_tibial", "Nerve_tibial", "Skin")
+## Exclude one sample with missing mapping annotations from skin
+samp.idx <- which(gtex.rse$Skin@colData$sampid == "GTEX-YF7O-2326-101833-SM-5CVN9")
+gtex.rse$Skin <- gtex.rse$Skin[,-samp.idx]
 
 ## select only those thyroid samples that have genotype information
 #sampid <- as.character(sapply(colData(gtex.rse[["Thyroid"]])$sampid, function(x){ 

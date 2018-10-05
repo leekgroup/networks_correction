@@ -43,10 +43,15 @@ gc.coeff <- lapply(gc.fit, function(each.gc.fit){
  	each.gc.fit$coefficients[2,]
  	})
 
-gtex.rse$Subcutaneous@colData$gc <- gc.coeff$Subcutaneous
-gtex.rse$Lung@colData$gc <- gc.coeff$Lung
-gtex.rse$Thyroid@colData$gc <- gc.coeff$Thyroid
-gtex.rse$Muscle@colData$gc <- gc.coeff$Muscle
-gtex.rse$Blood@colData$gc <- gc.coeff$Blood
+gtex.rse <- mapply(function(x,y){
+		x@colData$gc <- y
+		x
+		}, gtex.rse, gc.coeff)
+
+#gtex.rse$Subcutaneous@colData$gc <- gc.coeff$Subcutaneous
+#gtex.rse$Lung@colData$gc <- gc.coeff$Lung
+#gtex.rse$Thyroid@colData$gc <- gc.coeff$Thyroid
+#gtex.rse$Muscle@colData$gc <- gc.coeff$Muscle
+#gtex.rse$Blood@colData$gc <- gc.coeff$Blood
 
 save(gtex.rse, file = save.gc.attached.fn)

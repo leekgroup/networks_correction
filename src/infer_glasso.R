@@ -11,8 +11,8 @@ save.fn <- inputargs[3]
 print(inputargs)
 load(dat.fn)
 
-# normalize the data to have a gaussian distribution
-dat.expr <- normalize(dat.expr[[tiss.name]])
+# q_normalize the data to have a gaussian distribution
+dat.expr <- q_normalize(dat.expr[[tiss.name]])
 
 # compute covariance matrix
 dat.expr <- t(assay(dat.expr, 1)) ## genes in the column 

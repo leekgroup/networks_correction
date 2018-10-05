@@ -15,7 +15,7 @@ save.subset.fn <- inputargs[4]
 load(raw.file)
 
 ## select n most variable genes
-dat.expr <- variable.selection.average(gtex.rse, n = num.genes)
+dat.expr <- variable.selection(rse.object = gtex.rse, n = num.genes)
 
 ## Check if variable names in all tissues are in the same order
 paste("Checking if gene names in all tissues are in the same order: ")
@@ -28,10 +28,9 @@ all(rownames(dat.expr$Lung) == rownames(dat.expr$Blood))
 paste("Lung and Thyroid")
 all(rownames(dat.expr$Lung) == rownames(dat.expr$Thyroid))
 
-#dat.expr <- lapply(dat.expr, function(x){
-#	expDat <- x[order(rownames(x)),]
-#	expDat
-#})
+## save gene names
+gene.ids <- rownames(dat.expr$Lung)
+write.csv(gene.ids, file = save.gid.fn, row.names = F, quote = F)
 
 ## save subsetted file
 save(dat.expr, file = save.subset.fn)

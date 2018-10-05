@@ -21,6 +21,9 @@ pathways.fn <- inputargs[2]
 plot.dir <- inputargs[3]
 res.dir <- inputargs [4]
 save.fn <- inputargs[5]
+net_type <- inputargs[6]
+path_shared <- inputargs[7]
+
 type.exp <- c("raw", "rin", "gc", "mc", "exonicRate", "quarterpc", "halfpc", "pc")
 
   # get gene ids - symbol mapping from recount dataset
@@ -32,6 +35,12 @@ type.exp <- c("raw", "rin", "gc", "mc", "exonicRate", "quarterpc", "halfpc", "pc
   dat.gene.symbol <- data.frame(gene_id = names(dat.gene.symbol), gene_symbol = dat.gene.symbol, stringsAsFactors = F)
   rm(dat.expr)
 
+if(shared){
+    true.positive.list <- read.delim(pathways.fn, header = F)
+    true.positive.list <- t(apply(true.positive.list, 1, sort))
+    true.positive.list <- paste(true.positive.list[,1], true.positive.list[,2], sep = "_")
+
+}else{
    ## Read genesets
     g.sets <- read.delim(pathways.fn, header = F, stringsAsFactors = F, row.names = 1)
     g.sets$V2 <- NULL # second column is NA
@@ -64,10 +73,11 @@ type.exp <- c("raw", "rin", "gc", "mc", "exonicRate", "quarterpc", "halfpc", "pc
       
     true.positive.list <- unique(unlist(true.positive.list))
     true.positive.list <- true.positive.list[which(!is.na(true.positive.list))]
+}
     print("Total real edgelist size:")
     print(length(true.positive.list))
 
-
+if(net_type == "wgcna"){
   # for each network within the tissue generate a fully connected subgraph
   tiss.net <- lapply(type.exp, function(x,y,z){
     print(paste("Loading network", x))
@@ -96,6 +106,35 @@ type.exp <- c("raw", "rin", "gc", "mc", "exonicRate", "quarterpc", "halfpc", "pc
       })
     dat.module.network
   },tiss, dat.gene.symbol)
+}
+
+if(net_type == "glasso"){
+	tiss.net <- lapply(type.exp, function(x,y,z){
+    print(paste("Loading dataset", y, x))
+    load(paste("networks/", x, "/",y, "_glasso_networks.Rdata", sep = ""))
+    
+
+    net.edges <- lapply(dat.net, function(eachNet, z_infunc){
+      if(all(sub('(^[^.]+)\\.(.*)$','\\1',colnames(eachNet),"") == z_infunc$gene_id)){
+        rownames(eachNet) <- z_infunc$gene_symbol
+        colnames(eachNet) <- z_infunc$gene_symbol
+        na.idx <- which(is.na(rownames(eachNet)))
+        eachNet <- eachNet[-na.idx,-na.idx]
+        eachNet[lower.tri(eachNet)] <- t(eachNet)[lower.tri(eachNet)]
+        sorted.gene.order <- order(rownames(eachNet))
+        eachNet <- eachNet[sorted.gene.order, sorted.gene.order]
+        eachNet[lower.tri(eachNet)] <- NA
+        eachNet <- melt(eachNet, na.rm = T)
+        eachNet <- paste(eachNet$Var1, eachNet$Var2, sep = "_")
+        eachNet <- unique(eachNet)
+    }else{
+      print("Gene order and mapping error. Please manually check!")
+    }
+      eachNet
+      }, z)
+    net.edges
+  },tiss, dat.gene.symbol)
+}
 
   names(tiss.net) <- type.exp
 
@@ -143,9 +182,9 @@ type.exp <- c("raw", "rin", "gc", "mc", "exonicRate", "quarterpc", "halfpc", "pc
   # plot precision and recall
 
   fig_pr <- ggplot(pr.plot, aes(x = recall, y = precision, col = type))+ geom_point(size = 0.3) + ggtitle(tiss) + xlim(0, 0.20)+ ylim(0.0, 0.40)
-  png(paste(plot.dir, "/PR/wgcna_networks_", save.fn, ".png", sep = ""), height = 2, width = 4, units = "in", res = 400)
+  png(paste(plot.dir, "/PR/", net_type, "_", save.fn, ".png", sep = ""), height = 2, width = 4, units = "in", res = 400)
   print(fig_pr)
   dev.off()
 
   ## save file
-  saveRDS(pr.plot, file = paste(res.dir, "/PR/pr_density_wgcna_", save.fn, ".Rds", sep = "" ))
+  saveRDS(pr.plot, file = paste(res.dir, "/PR/pr_density_", net_type, "_", save.fn, ".Rds", sep = "" ))

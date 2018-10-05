@@ -18,10 +18,13 @@ results.dir <- inputargs[3]
 load(fn)
 
 compute.rss <- function(tiss){
-	cov <- tiss@colData[,c(10, 11, 21:81)]
+	cov <- tiss@colData[,c(10, 11, 21:80,83)]
 	rm.cov <- c("smpthnts", "smnabtch", "smnabtchd", "smgebtch")
 	cov <- cov[,!names(cov) %in% rm.cov]
-	cov <- cov[,-which(sapply(cov, function(x) length(unique(x))) == 1)]
+#	cov <- cov[,-which(sapply(cov, function(x) sum(!is.na(unique(x)))) == 1)]
+	cov <- cov[,-which(sapply(cov, function(x){
+		sum(!is.na(unique(x))) == 1 | all(is.na(x))
+	}))]
 	exp <- tiss@assays$data$counts
 	cov.corr <- rcorr(as.matrix(cov[,which(sapply(cov, class) %in% c("integer", "numeric"))]), type = "spearman")$r
 	rm.variables <- findCorrelation(cov.corr, cutoff = 0.75, names = T)
@@ -125,6 +128,18 @@ pve.plot %>% filter(.id == "Blood") %>%
 filter(!variable %in% tss.rss$Blood$remove) %>% 
 filter(value >= 0.01)
 
+pve.plot %>% filter(.id == "Nerve_tibial") %>%
+filter(!variable %in% tss.rss$Blood$remove) %>%
+filter(value >= 0.01)
+
+pve.plot %>% filter(.id == "Artery_tibial") %>%
+filter(!variable %in% tss.rss$Blood$remove) %>%
+filter(value >= 0.01)
+
+pve.plot %>% filter(.id == "Skin") %>%
+filter(!variable %in% tss.rss$Blood$remove) %>%
+filter(value >= 0.01)
+#write.table(pve.plot, file = "etc/percent_variance_tissue_covariates.txt")
 ## write files csv --> commented out for now
 # write.csv(tiss.pve, file = "known_covariates_expression_pve.csv")
 # write.csv(tss.rss$Lung$cov_corr, file = "Lung.csv")

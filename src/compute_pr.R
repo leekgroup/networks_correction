@@ -1,11 +1,12 @@
 rm(list = ls())
 
-setwd("/work-zfs/abattle4/parsana/networks_correction/")
+setwd("/work-zfs/abattle4/parsana/networks_correction_coomon_genes/")
 
 library(reshape2)
 library(dplyr)
 library(ggplot2)
 library(recount)
+library(gtools)
 
 inputargs <- commandArgs(TRUE)
 tiss <- inputargs[1]
@@ -16,7 +17,7 @@ save.fn <- inputargs[5]
 net_type <- inputargs[6]
 path_shared <- eval(parse(text = inputargs[7]))
 
-type.exp <- c("raw", "rin", "gc", "mc", "exonicRate", "quarterpc", "halfpc", "pc")
+type.exp <- c("raw", "rin", "gc", "exonicRate", "mc", "quarterpc", "halfpc", "pc")
 
   # get gene ids - symbol mapping from recount dataset
 
@@ -28,8 +29,9 @@ type.exp <- c("raw", "rin", "gc", "mc", "exonicRate", "quarterpc", "halfpc", "pc
   rm(dat.expr)
 
 if(path_shared){
-    true.positive.list <- read.delim(pathways.fn, header = F)
-    true.positive.list <- t(apply(true.positive.list, 1, sort))
+    true.positive.list <- read.delim(pathways.fn, header = T, row.names = 1, stringsAsFactors = F, sep = " ")
+    true.positive.list <- true.positive.list[true.positive.list[,1] %in% dat.gene.symbol$gene_symbol & true.positive.list[,2] %in% dat.gene.symbol$gene_symbol,]
+    true.positive.list <- t(apply(true.positive.list, 1, mixedsort))
     true.positive.list <- paste(true.positive.list[,1], true.positive.list[,2], sep = "_")
 
 }else{
@@ -38,7 +40,7 @@ if(path_shared){
     g.sets$V2 <- NULL # second column is NA
     names.gsets <- rownames(g.sets)
     g.sets <- t(g.sets)
-    g.sets <- sapply(g.sets, function(x) sort(strsplit(x,',')[[1]]))
+    g.sets <- sapply(g.sets, function(x) mixedsort(strsplit(x,',')[[1]]))
 
     ## select genes in pathways that are also present in the set of variable genes
     genes.inpathways <- lapply(g.sets, function(x,y){
@@ -52,27 +54,26 @@ if(path_shared){
       names.gsets <- sapply(names.gsets, function(x) strsplit(x,'_')[[1]][1])
       names(genes.inpathways) <- names.gsets
       true.positive.list <- melt(genes.inpathways)
-      true.positive.list <- t(apply(true.positive.list, 1, sort))
-      true.positive.list <- paste(true.positive.list[,1], true.positive.list[,2], sep = "_")
+      true.positive.list <- t(apply(true.positive.list, 1, mixedsort))
+      true.positive.list <- unique(paste(true.positive.list[,1], true.positive.list[,2], sep = "_"))
     }else{
       true.positive.list <- lapply(genes.inpathways, function(x){
       if(length(x) > 1){
-        pathway.edge <- t(combn(sort(x),2))
+        pathway.edge <- t(combn(mixedsort(x),2))
         pathway.edge <- paste(pathway.edge[,1], pathway.edge[,2], sep = "_")
       }else{
         pathway.edge <- NA
       }
       pathway.edge
       })
+      true.positive.list <- unique(unlist(true.positive.list))
     }
-      
-    true.positive.list <- unique(unlist(true.positive.list))
     true.positive.list <- true.positive.list[which(!is.na(true.positive.list))]
 }
     print("Total real edgelist size:")
     print(length(true.positive.list))
 
-if(net_type %in% c("wgcna", "wgcna-signed")){
+if(net_type %in% c("wgcna", "wgcna-signed", "power_wgcna")){
   # for each network within the tissue generate a fully connected subgraph
   tiss.net <- lapply(type.exp, function(x,y,z){
     print(paste("Loading network", x))
@@ -82,6 +83,9 @@ if(net_type %in% c("wgcna", "wgcna-signed")){
     if(net_type == "wgcna-signed"){
     load(paste("networks", x, "signed_wgcna_networks.Rdata", sep = "/")) 
     }
+    if(net_type == "power_wgcna"){
+    load(paste("networks", x, "power_wgcna_networks.Rdata", sep = "/"))
+    }
     # get module assignments for each cut-off networks
     this.net <- lapply(dat.net[[y]], function(eachNet, gene.symbol){
       eachNet <- eachNet$colors
@@ -90,10 +94,16 @@ if(net_type %in% c("wgcna", "wgcna-signed")){
     }, z)
 
     dat.module.network <- lapply(this.net, function(eachNet){
-      total.num.modules <- sort(unique(eachNet))[-1] ## remove gray modules
+      total.num.modules <- mixedsort(unique(eachNet))[-1] ## remove gray modules
+      if(any(table(eachNet) == 1)){
+        tmp_count <- table(eachNet)
+        total.num.modules <- names(tmp_count)[tmp_count != 1]
+        total.num.modules <- mixedsort(as.numeric(total.num.modules))[-1]
+      }
+      print(total.num.modules)
       module.genes.eachNet <- lapply(total.num.modules, function(eachModule, this.network){
         genes.in.module <- names(this.network)[which(this.network == eachModule)]
-        genes.in.module <- sort(genes.in.module)
+        genes.in.module <- mixedsort(genes.in.module)
         if(any(is.na(genes.in.module))){
           genes.in.module <- genes.in.module[-which(is.na(genes.in.module))]
         }

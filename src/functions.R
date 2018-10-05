@@ -20,7 +20,7 @@ select.genes <- function(rse.object, threshold, ...){
 ## PC correction - Residuals from Regressing Top PCs - modified to work for rse object ##
 ## Adopted from Claire's function ##
 
-source("https://bioconductor.org/biocLite.R")
+#source("https://bioconductor.org/biocLite.R")
 # biocLite("sva")
 library(sva)
 
@@ -111,8 +111,8 @@ pick.power = function(dat, nType = "unsigned"){
   power
 }
 
-## normalize data before graphical lasso
-normalize <- function(rse.object){
+## q_normalize data before graphical lasso
+q_normalize <- function(rse.object){
   dat <- t(SummarizedExperiment::assay(rse.object,1))
   n = nrow(dat)
   p = ncol(dat)
@@ -133,7 +133,7 @@ normalize <- function(rse.object){
   # rows --> samples
   # QUIC
 graph.lasso <- function(rse.object, rho.values, tolerance, max.iter){
-  rse.object <- normalize(rse.object)
+  rse.object <- q_normalize(rse.object)
   norm.dat <- SummarizedExperiment::assay(rse.object, 1)
   cov.mat <- cov(t(norm.dat)) # genes --> columns and samples --> rows
   precision.mat <- mclapply(rho.values, function(x, cov.matrix, tolerance, max.iter){
@@ -152,7 +152,7 @@ graph.lasso <- function(rse.object, rho.values, tolerance, max.iter){
 
 ## WGCNA networks at different cut height
 weighted.networks <- function(dat, cutheights, power, blocks = NULL, goodGenes = NULL, goodSamples = NULL, dendrograms = NULL, networkType = "unsigned"){
-	source("config")
+	source("config.R")
 #	if(is.null(networkType)){
 #		networkType <- "unsigned"
 #	}
