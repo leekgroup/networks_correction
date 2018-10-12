@@ -1,6 +1,6 @@
 rm(list = ls())
 
-setwd("/work-zfs/abattle4/parsana/networks_correction_coomon_genes/")
+setwd("/work-zfs/abattle4/parsana/networks_correction/")
 
 library(reshape2)
 library(dplyr)

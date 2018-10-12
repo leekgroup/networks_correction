@@ -11,7 +11,7 @@ library("parallel")
 library("ggplot2")
 
 ## data directory
-homeDir <- "/work-zfs/abattle4/parsana/networks_correction_coomon_genes/"
+homeDir <- "/work-zfs/abattle4/parsana/networks_correction/"
 datDir <- paste(homeDir, "data/", sep = "")
 networksDir <- paste(homeDir, "networks/", sep = "")
 
