@@ -1,0 +1,57 @@
+---
+title: 'PC based correction for gene co-expression networks '
+output:
+  html_document:
+    df_print: paged
+---
+This is a vignette for applying PC based residualization on gene expression data for building co-expression networks.
+
+```{r, message = F}
+## Libraries and functions
+library("sva")
+
+q_normalize <- function(dat){
+  n = nrow(dat)
+  p = ncol(dat)
+  rank.dat =  dat # matrix for ranking
+  for (i in 1:p){
+    rank.dat[,i] = rank(dat[,i])
+  }
+  U = rank.dat/(n+1)
+  qnorm(U)
+}
+```
+
+
+```{r}
+## Load gene expression data - rows are samples, columns are genes
+dat_exprs <- readRDS("confounded_data.Rds")
+```
+
+Next, using the permutation approach, we identify the number of top PCs that contribute to noise and confounding in the gene expression measurements. This noise if not removed, can contribute to spurious correlations between genes thereby introducing false positive connections in the network.
+
+To correct for this, using a linear model we residualize gene expression measurements using the number of PCs esimated.
+```{r}
+## Estimate the number of PCs to be removed - permutation approach as implemented in 'num.sv' in the SVA package
+mod=matrix(1,nrow=dim(dat_exprs)[1],ncol=1)
+colnames(mod)="Intercept"
+nsv=num.sv(t(dat_exprs),mod, method = "be") ## num.sv requires data matrix with features(genes) in the rows and samples in the column
+
+print(paste("Number of PCs estimated to be removed:", nsv))
+
+## PC residualization of gene expression data using sva_network. Rows correspond to samples, Columns correspond to features
+exprs_corrected = sva_network(dat_exprs, nsv)
+```
+
+We now have the PC adjusted expression measurements which can be used to build co-expression networks with routine pairwise association based methods such as WGCNA or graphical lasso. We provide a small example for reconstructing network with graphical lasso.
+
+```{r}
+
+## Quantile normalize the corrected gene expression measurements such that each gene follows a gaussian distribution - this is particularly important for graphical lasso
+exprs_corrected_norm <- q_normalize(exprs_corrected)
+
+S = cov(exprs_corrected_norm)
+dat.net <- glasso::glasso(S, rho = 0.2)
+number_of_parameters <- sum(dat.net$wi!=0 & col(S) < row(S))
+print(paste("The number of edges in the inferred network is:", number_of_parameters))
+```
