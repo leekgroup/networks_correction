@@ -49,6 +49,9 @@ if(path_shared){
       }, dat.gene.symbol$gene_symbol)
     
     unique.gene.symbols.inpathways <- unique(unlist(genes.inpathways))
+    size_genes_inpathways <- length(unique.gene.symbols.inpathways)
+    total_genes_symbol <- sum(!is.na(dat.gene.symbol$gene_symbol))
+    print(total_genes_symbol)
 
     if(any(grepl("tft", pathways.fn))){
       names.gsets <- sapply(names.gsets, function(x) strsplit(x,'_')[[1]][1])
@@ -154,13 +157,14 @@ if(net_type == "glasso"){
     print(t)
     type.net[[t]] <- lapply(tiss.net[[t]], function(x, z){
       total.positives <- length(x)
+      total.negatives <- ((total_genes_symbol * (total_genes_symbol - 1))/2) - total.positives
       tp <- length(intersect(x,z)) # present in both network and pathways
       fn <- length(setdiff(z,x)) # present in pathways missing in network
       fp <- length(setdiff(x,z)) # present in network absent in pathways
       precision <- tp/(tp+fp)
       recall <- tp/(tp+fn)
       # c(tp, fp, fn)
-      return(c(precision, recall, total.positives))
+      return(c(precision, recall, fn, total.positives, total.negatives))
     }, true.positive.list)
   }
 
@@ -168,7 +172,7 @@ if(net_type == "glasso"){
 
     type.net.bind <- mapply(function(x,y){
       x <- do.call(rbind, x)
-      colnames(x) <- c("precision", "recall", "density")
+      colnames(x) <- c("precision", "recall", "false_negatives", "density", "total_negatives")
       x <- data.frame(x)
       x$type <- y
       x
