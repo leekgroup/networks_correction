@@ -1,0 +1,90 @@
+---
+title: "R Notebook"
+output:
+  html_document:
+    df_print: paged
+  html_notebook: default
+  pdf_document: default
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r, message=FALSE}
+library(huge, quietly = T)
+library(sva, quietly = T)
+```
+
+```{r}
+lambda=seq(0,1,length.out=200)
+
+set.seed(101)
+## generate simulated scale free network
+dat <- huge.generator(n = 10000, d = 100, graph = "scale-free", v = NULL, u = NULL,
+               g = NULL, prob = NULL, vis = F, verbose = TRUE)
+
+
+sim.dat <- dat$data
+n <- nrow(sim.dat)
+p <- ncol(sim.dat)
+
+## infer networks using simulated data
+sim.net <- huge(sim.dat, lambda = lambda, method = "glasso", verbose = F)
+
+## Count edges from inferred networks, and common edges
+true_ecount <- sum(dat$theta == 1 & col(dat$theta) < row(dat$theta))
+print(paste("The number of edges in the true network:", true_ecount))
+sim_ecount <- sum(sim.net$path[[39]] == 1 & col(dat$theta) < row(dat$theta))
+print(paste("The number of edges in the inferred network", sim_ecount))
+sim_true_ecount <- sum(dat$theta + sim.net$path[[39]] == 2 & col(dat$theta) < row(dat$theta))
+print(paste("The number common edges in the inferred and true network", sim_true_ecount))
+
+```
+
+```{r}
+## confounded data
+
+sim.confounded=sim.dat
+set.seed(101)
+grp=rnorm(n)
+for(i in 10:30){
+  sim.confounded[,i] = sim.confounded[,i] + 5*grp
+}
+
+
+saveRDS(sim.confounded, file = "~/research/networks_correction/simulation_scale_free/confounded_data.Rds")
+
+## infer networks
+sim.confounded.net <- huge(sim.confounded, lambda = lambda, method = "glasso", verbose = F)
+
+## Count edges from inferred networks, and common edges
+true_ecount <- sum(dat$theta == 1 & col(dat$theta) < row(dat$theta))
+print(paste("The number of edges in the true network:", true_ecount))
+confounded_ecount <- sum(sim.confounded.net$path[[39]] == 1 & col(dat$theta) < row(dat$theta))
+print(paste("The number of edges in the inferred network (confounded data): ", confounded_ecount))
+sim_confounded_ecount <- sum(dat$theta + sim.confounded.net$path[[39]] == 2 & col(dat$theta) < row(dat$theta))
+print(paste("The number common edges in the inferred (confounded) and true network:", sim_confounded_ecount))
+```
+
+```{r}
+## PC correction
+mod=matrix(1,nrow=dim(sim.confounded)[1],ncol=1)
+colnames(mod)="Intercept"
+nsv=num.sv(t(sim.confounded),mod, method = "be")
+print(paste("the number of PCs estimated to be removed:", nsv))
+ss=svd(scale(sim.confounded))
+grp.est=ss$u[,1:nsv]
+sim.corrected=lm(sim.confounded~grp.est)$residuals
+
+#infer network
+sim.corrected.net <- huge(sim.corrected, lambda = lambda, method = "glasso", verbose = F)
+
+## Count edges from inferred networks, and common edges
+true_ecount <- sum(dat$theta == 1 & col(dat$theta) < row(dat$theta))
+print(paste("The number of edges in the true network:", true_ecount))
+corrected_ecount <- sum(sim.corrected.net$path[[39]] == 1 & col(dat$theta) < row(dat$theta))
+print(paste("The number of edges in the inferred network (PC corrected data): ", corrected_ecount))
+sim_corrected_ecount <- sum(dat$theta + sim.corrected.net$path[[39]] == 2 & col(dat$theta) < row(dat$theta))
+print(paste("The number common edges in the inferred (PC corrected) and true network:", sim_corrected_ecount))
+```
