@@ -2,45 +2,46 @@ library(cowplot)
 library(ggplot2)
 theme_set(theme_cowplot(font_size=9))
 lambda <- seq(0.3,1.0, length.out = 50)
-cat.plot <- c("PC", "RIN", "multi-covariate", "uncorrected")
+cat.plot <- c("uncorrected", "RIN", "multi-covariate", "PC")
 # select category to plot
 select_category <- function(category_name, pr_table){
   pr_table <- pr_table[which(pr_table$type %in% category_name),]
+  pr_table$type <- factor(pr_table$type, levels = category_name) 
   pr_table$lambda <- rep(lambda,length(category_name))
   pr_table
 }
 plot.thyroid <- readRDS("/work-zfs/abattle4/parsana/networks_correction/results/PR/pr_density_glasso_canonical_thyroid.Rds")
 plot.thyroid <- select_category(cat.plot, plot.thyroid)
 plot.thyroid <- ggplot(plot.thyroid, aes(x = lambda, y = 1-precision, colour = type)) + geom_point(size =0.3) +
-  xlab("lambda") + ylab("FDR")+ggtitle("Thyroid") + scale_color_manual(values = c("#B22222", "#006400", "#FFA500", "#800080"))
+  xlab("lambda") + ylab("FDR")+ggtitle("Thyroid") 
 plot.lung <- readRDS("/work-zfs/abattle4/parsana/networks_correction/results/PR/pr_density_glasso_canonical_lung.Rds")
 plot.lung <- select_category(cat.plot, plot.lung)
 plot.lung <- ggplot(plot.lung, aes(x = lambda, y = 1-precision, colour = type)) + geom_point(size = 0.3) +
-  xlab("lambda") + ylab("FDR")+ggtitle("Lung")+ scale_color_manual(values = c("#B22222", "#006400", "#FFA500", "#800080"))
+  xlab("lambda") + ylab("FDR")+ggtitle("Lung")
 plot.blood <- readRDS("/work-zfs/abattle4/parsana/networks_correction/results/PR/pr_density_glasso_canonical_blood.Rds")
 plot.blood <- select_category(cat.plot, plot.blood)
 plot.blood <- ggplot(plot.blood, aes(x = lambda, y = 1-precision, colour = type)) + geom_point(size = 0.3) +
-  xlab("lambda") + ylab("FDR")+ggtitle("Whole Blood")+ scale_color_manual(values = c("#B22222", "#006400", "#FFA500", "#800080"))
+  xlab("lambda") + ylab("FDR")+ggtitle("Whole Blood")
 plot.skin <- readRDS("/work-zfs/abattle4/parsana/networks_correction/results/PR/pr_density_glasso_canonical_skin.Rds")
 plot.skin <- select_category(cat.plot, plot.skin)
 plot.skin <- ggplot(plot.skin, aes(x = lambda, y = 1-precision, colour = type)) + geom_point(size = 0.3) +
-  xlab("lambda") + ylab("FDR")+ggtitle("skin")+ scale_color_manual(values = c("#B22222", "#006400", "#FFA500", "#800080"))
+  xlab("lambda") + ylab("FDR")+ggtitle("skin")
 plot.muscle <- readRDS("/work-zfs/abattle4/parsana/networks_correction/results/PR/pr_density_glasso_canonical_muscle.Rds")
 plot.muscle <- select_category(cat.plot, plot.muscle)
 plot.muscle <- ggplot(plot.muscle, aes(x = lambda, y = 1-precision, colour = type)) + geom_point(size = 0.3) +
-  xlab("lambda") + ylab("FDR")+ggtitle("muscle")+ scale_color_manual(values = c("#B22222", "#FFA500", "#006400", "#800080"))
+  xlab("lambda") + ylab("FDR")+ggtitle("muscle")
 plot.subcutaneous <- readRDS("/work-zfs/abattle4/parsana/networks_correction/results/PR/pr_density_glasso_canonical_subcutaneous.Rds")
 plot.subcutaneous <- select_category(cat.plot, plot.subcutaneous)
 plot.subcutaneous <- ggplot(plot.subcutaneous, aes(x = lambda, y = 1-precision, colour = type)) + geom_point(size = 0.3) +
-  xlab("lambda") + ylab("FDR")+ggtitle("subcutaneous")+ scale_color_manual(values = c("#B22222", "#006400", "#FFA500", "#800080"))
+  xlab("lambda") + ylab("FDR")+ggtitle("subcutaneous")
 plot.artery <- readRDS("/work-zfs/abattle4/parsana/networks_correction/results/PR/pr_density_glasso_canonical_artery.Rds")
 plot.artery <- select_category(cat.plot, plot.artery)
 plot.artery <- ggplot(plot.artery, aes(x = lambda, y = 1-precision, colour = type)) + geom_point(size = 0.3) +
-  xlab("lambda") + ylab("FDR")+ggtitle("artery")+ scale_color_manual(values = c("#B22222", "#006400", "#FFA500", "#800080"))
+  xlab("lambda") + ylab("FDR")+ggtitle("artery")
 plot.nerve <- readRDS("/work-zfs/abattle4/parsana/networks_correction/results/PR/pr_density_glasso_canonical_nerve.Rds")
 plot.nerve <- select_category(cat.plot, plot.nerve)
 plot.nerve <- ggplot(plot.nerve, aes(x = lambda, y = 1-precision, colour = type)) + geom_point(size = 0.3) +
-  xlab("lambda") + ylab("FDR")+ggtitle("nerve")+ scale_color_manual(values = c("#B22222", "#006400", "#FFA500", "#800080"))
+  xlab("lambda") + ylab("FDR")+ggtitle("nerve")
 ###############################
 
 legend <- get_legend(plot.lung +
