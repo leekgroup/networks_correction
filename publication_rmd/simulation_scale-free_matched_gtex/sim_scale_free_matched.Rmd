@@ -1,0 +1,69 @@
+---
+title: "Simulation: Scale-free networks matched to GTEx"
+output:
+  html_notebook: default
+  html_document:
+    df_print: paged
+  pdf_document: default
+---
+
+```{r, message=FALSE}
+library(huge, quietly = T)
+library(Matrix)
+```
+
+Here, we first simulated data from a multivariate gaussian distribution based on an underlying scale-free network structure in the precision matrix. We tried to match the number of samples to the number of samples in our empirical experiments done with GTEx data. This simulation included 5000 genes across 350 samples. We found that the number of false discoveries is much higher in confounded data. Further, this analysis shows that PC correction increased the number of true positives in the inferred networks - numbers that were similar to networks obtained from original simulated data(without confounding). 
+```{r}
+set.seed(101)
+## generate simulated scale free network
+dat <- huge.generator(n = 350, d = 5000, graph = "scale-free", v = NULL, u = NULL,
+               g = NULL, prob = NULL, vis = F, verbose = TRUE)
+
+
+dat.theta <- dat$theta
+
+rm(dat)
+## load networks inferred with simulated data
+sim.net <- readRDS("sim.Rds")
+sim.confounded.net <- readRDS("sim_confounded.Rds")
+sim.corrected.net <- readRDS("sim_corrected.Rds")
+
+a=5
+
+## Count the total number of edges in the network
+true_ecount <- sum(dat.theta == 1 & col(dat.theta) < row(dat.theta))
+confounded_ecount <- sapply(sim.confounded.net, function(x) sum(x == 1 & col(x) < row(x)))
+sim_ecount <- sapply(sim.net,function(x) sum(x == 1 & col(x) < row(x)))
+corrected_ecount <- sapply(sim.corrected.net, function(x) sum(x == 1 & col(x) < row(x)))
+
+gc()
+## count the number of edges common with the simulated network
+confounded_common <- sapply(sim.confounded.net, function(x,y) {sum((x+y) == 2 & col(x) < row(x))}, dat.theta)
+sim_common <- sapply(sim.net, function(x,y) {sum((x+y) == 2 & col(x) < row(x))}, dat.theta)
+corrected_common <- sapply(sim.corrected.net, function(x,y) {sum((x+y) == 2 & col(x) < row(x))}, dat.theta)
+
+print(paste("The number of edges in the true network:", true_ecount))
+print(paste("The number of edges in the inferred network", sim_ecount[a]))
+print(paste("The number of edges in the confounded network", confounded_ecount[a]))
+print(paste("The number of edges in the corrected network", corrected_ecount[a]))
+print(paste("The number common edges in the confounded and true network", confounded_common[a]))
+print(paste("The number common edges in the inferred and true network", sim_common[a]))
+print(paste("The number common edges in the inferred and true network", corrected_common[a]))
+
+```
+Next, we checked the proportion of edges from original simulated data networks that were also identified in PC corrected networks, and proportion of edges from original simulated data networks that were also identified in confounded networks.
+```{r}
+sim_corrected_common <- mapply(function(x,y){
+  sum(x+y == 2 & col(x) < row(x))
+}, sim.net, sim.corrected.net)
+
+
+sim_corrected_common/sim_ecount
+
+sim_confounded_common <- mapply(function(x,y){
+  sum(x+y == 2 & col(x) < row(x))
+}, sim.net, sim.confounded.net)
+
+sim_confounded_common/sim_ecount
+
+```
