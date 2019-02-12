@@ -1,5 +1,5 @@
 ---
-title: 'PC based correction for gene co-expression networks '
+title: "R Notebook"
 output:
   html_document:
     df_print: paged
@@ -7,8 +7,11 @@ output:
 This is a vignette for applying PC based residualization on gene expression data for building co-expression networks.
 
 ```{r, message = F}
+
 ## Libraries and functions
 library("sva")
+library("recount", quietly = T)
+library(WGCNA)
 
 q_normalize <- function(dat){
   n = nrow(dat)
@@ -22,36 +25,56 @@ q_normalize <- function(dat){
 }
 ```
 
-
+We will begin with loading a subsetted version of GTEx liver data. This subsetting was done for ease of tutorial
 ```{r}
-## Load gene expression data - rows are samples, columns are genes
-dat_exprs <- readRDS("confounded_data.Rds")
+load("liver_subset_gtex.Rdata")
+rse_raw <- t(rse_raw) # transpose data so that rows are samples and columns are gene expression measurements
 ```
 
-Next, using the permutation approach, we identify the number of top PCs that contribute to noise and confounding in the gene expression measurements. This noise if not removed, can contribute to spurious correlations between genes thereby introducing false positive connections in the network.
+### Apply PC based correction to confounded gene expression measurements
+Using the permutation approach, we identify the number of top PCs that contribute to noise and confounding in the gene expression measurements. This noise if not removed, can contribute to spurious correlations between genes thereby introducing false positive connections in the network.
 
 To correct for this, using a linear model we residualize gene expression measurements using the number of PCs esimated.
+
 ```{r}
-## Estimate the number of PCs to be removed - permutation approach as implemented in 'num.sv' in the SVA package
-mod=matrix(1,nrow=dim(dat_exprs)[1],ncol=1)
+mod=matrix(1,nrow=dim(rse_raw)[1],ncol=1)
 colnames(mod)="Intercept"
-nsv=num.sv(t(dat_exprs),mod, method = "be") ## num.sv requires data matrix with features(genes) in the rows and samples in the column
+nsv=num.sv(t(rse_raw),mod, method = "be") ## num.sv requires data matrix with features(genes) in the rows and samples in the column
 
 print(paste("Number of PCs estimated to be removed:", nsv))
 
 ## PC residualization of gene expression data using sva_network. Rows correspond to samples, Columns correspond to features
-exprs_corrected = sva_network(dat_exprs, nsv)
+exprs_corrected = sva_network(rse_raw, nsv)
 ```
-
-We now have the PC adjusted expression measurements which can be used to build co-expression networks with routine pairwise association based methods such as WGCNA or graphical lasso. We provide a small example for reconstructing network with graphical lasso.
 
 ```{r}
+## Quantile normalize the corrected gene expression measurements such that each expression of every gene follows a gaussian distribution
 
-## Quantile normalize the corrected gene expression measurements such that each gene follows a gaussian distribution - this is particularly important for graphical lasso
 exprs_corrected_norm <- q_normalize(exprs_corrected)
-
-S = cov(exprs_corrected_norm)
-dat.net <- glasso::glasso(S, rho = 0.2)
-number_of_parameters <- sum(dat.net$wi!=0 & col(S) < row(S))
-print(paste("The number of edges in the inferred network is:", number_of_parameters))
 ```
+### Build co-expression networks with WGCNA
+
+Using PC adjusted expression measurements, we build co-expression networks with WGCNA. 
+
+```{r}
+## select soft-thresholding power transform for WGCNA
+wgcna_soft_thr <- WGCNA::pickSoftThreshold(exprs_corrected_norm, networkType = "signed")
+wgcna_power <- wgcna_soft_thr$powerEstimate
+ if(is.na(wgcna_power)){
+	print(paste("no power reached r-suared cut-off, now choosing max r-squared based power"))
+	wgcna_power <- wgcna_soft_thr$fitIndices$Power[which(wgcna_soft_thr$fitIndices$SFT.R.sq == max(wgcna_soft_thr$fitIndices$SFT.R.sq))]
+ }
+
+```
+
+```{r}
+wgcna_net <- blockwiseModules(exprs_corrected_norm, power = wgcna_power,
+                       verbose = 3, numericLabels = T)
+table(wgcna_net$colors)
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
