@@ -13,7 +13,7 @@ create.igraph <- function(network){
 }
 
 
-fn <- dir("networks/", recursive=T, full.names = T)
+fn <- dir("../../networks/", recursive=T, full.names = T)
 fn <- fn[grep("glasso", fn)]
 
 igraph_net <- mclapply(fn, function(x){
@@ -25,14 +25,14 @@ igraph_net <- mclapply(fn, function(x){
 	net.igraph
 	}, mc.cores = 16)
 
-igraph_net <- lapply(igraph_net, function(x,y){
-	y <- y
-	this_net <- lapply(x, function(thisx, thisy){
-		V(thisx)$name <- thisy
-		thisx
-		}, y)
-	this_net
-	}, dat.gene.symbol$gene_symbol)
+#igraph_net <- lapply(igraph_net, function(x,y){
+#	y <- y
+#	this_net <- lapply(x, function(thisx, thisy){
+#		V(thisx)$name <- thisy
+#		thisx
+#		}, y)
+#	this_net
+#	}, dat.gene.symbol$gene_symbol)
 
 cc_net <- mclapply(igraph_net, function(x)
 		sapply(x, transitivity), mc.cores = 16)
@@ -88,7 +88,7 @@ thisplot <- ggplot(aes(y = value, x = tissue, fill = version),
 	data = plot_this)+
 geom_boxplot()+ ylab("Clustering coefficient")+ xlab("Tissue") + theme_classic()+theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
-pdf("suppfig12.pdf", height = 7, width = 12)
+pdf("../suppfig12.pdf", height = 7, width = 12)
 print(thisplot)
 dev.off()
 
