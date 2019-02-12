@@ -1,8 +1,8 @@
 ---
-title: "R Notebook"
+title: "PC correction tutorial with example dataset"
 output:
-  html_document:
-    df_print: paged
+    html_document:
+    code_folding: "hide"
 ---
 This is a vignette for applying PC based residualization on gene expression data for building co-expression networks.
 
@@ -11,7 +11,7 @@ This is a vignette for applying PC based residualization on gene expression data
 ## Libraries and functions
 library("sva")
 library("recount", quietly = T)
-library(WGCNA)
+library("WGCNA", quietly = T)
 
 q_normalize <- function(dat){
   n = nrow(dat)
@@ -73,8 +73,4 @@ wgcna_net <- blockwiseModules(exprs_corrected_norm, power = wgcna_power,
 table(wgcna_net$colors)
 ```
 
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
-
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
-
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+WGCNA identifies 6 co-expression modules. It also contains 799 genes unassigned to any modules.
