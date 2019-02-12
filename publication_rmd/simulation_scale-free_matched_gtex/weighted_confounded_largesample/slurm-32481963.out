@@ -1,0 +1,37 @@
+
+Lmod is automatically replacing "intel/18.0" with "gcc/5.5.0".
+
+
+Due to MODULEPATH changes, the following have been reloaded:
+  1) R/3.4.0     2) openmpi/3.1
+
+Loading required package: mgcv
+Loading required package: nlme
+This is mgcv 1.8-25. For overview type 'help("mgcv-package")'.
+Loading required package: genefilter
+Loading required package: BiocParallel
+Loading required package: methods
+Loading required package: Matrix
+Loading required package: lattice
+Loading required package: igraph
+
+Attaching package: ‘igraph’
+
+The following objects are masked from ‘package:stats’:
+
+    decompose, spectrum
+
+The following object is masked from ‘package:base’:
+
+    union
+
+Loading required package: MASS
+
+Attaching package: ‘MASS’
+
+The following object is masked from ‘package:genefilter’:
+
+    area
+
+/var/spool/slurm//job32481963/slurm_script: line 14: 74795 Killed                  Rscript generate_sim_data.R > log/generate_sim_data.log
+slurmstepd: error: Detected 1 oom-kill event(s) in step 32481963.batch cgroup. Some of your processes may have been killed by the cgroup out-of-memory handler.
